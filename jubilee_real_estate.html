@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jubilee Real Estate | Thailand</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .page-section {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom scrollbar for filter panel */
+        .advanced-filters {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .advanced-filters.open {
+            max-height: 500px;
+            opacity: 1;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        
+        /* Notification Toast */
+        #toast {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#059669', 
+                        primaryHover: '#047857', 
+                        dark: '#0f172a', 
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="navigate('home')">
+                        <img src="./img/logo.jpg" alt="Jubilee Logo" class="h-10 object-contain">
+                        <span class="font-bold text-xl text-dark tracking-tight hidden sm:block mt-2">Jubilee Real Estate</span>
+                    </div>
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <button onclick="navigate('home')" id="nav-home" data-i18n="navHome" class="nav-link border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">Home</button>
+                        <button onclick="navigate('properties')" id="nav-properties" data-i18n="navProperties" class="nav-link border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">Properties</button>
+                        <button onclick="navigate('looking')" id="nav-looking" data-i18n="navLooking" class="nav-link border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">Looking</button>
+                        <button onclick="navigate('contact')" id="nav-contact" data-i18n="navContact" class="nav-link border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">Contact</button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Language Toggle -->
+                    <div class="flex bg-slate-100 rounded-lg p-1 border border-slate-200">
+                        <button onclick="setLanguage('th')" id="btn-lang-th" class="px-3 py-1 text-sm font-bold rounded-md bg-white shadow-sm text-primary transition-all">TH</button>
+                        <button onclick="setLanguage('en')" id="btn-lang-en" class="px-3 py-1 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all">EN</button>
+                    </div>
+                    <button onclick="navigate('looking')" data-i18n="navAddListing" class="bg-primary hover:bg-primaryHover text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm hidden sm:block">
+                        Post Requirement
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div class="md:hidden flex space-x-4 pb-3 overflow-x-auto no-scrollbar pt-2 border-t border-gray-100">
+                <button onclick="navigate('home')" data-i18n="navHome" class="text-gray-600 hover:text-primary text-sm font-medium whitespace-nowrap">Home</button>
+                <button onclick="navigate('properties')" data-i18n="navProperties" class="text-gray-600 hover:text-primary text-sm font-medium whitespace-nowrap">Properties</button>
+                <button onclick="navigate('looking')" data-i18n="navLooking" class="text-gray-600 hover:text-primary text-sm font-medium whitespace-nowrap">Looking</button>
+                <button onclick="navigate('contact')" data-i18n="navContact" class="text-gray-600 hover:text-primary text-sm font-medium whitespace-nowrap">Contact</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col">
+        
+        <!-- ================= HOME PAGE ================= -->
+        <div id="page-home" class="page-section block">
+            <div class="relative bg-dark h-[500px] lg:h-[600px] flex items-center">
+                <div class="absolute inset-0">
+                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80" alt="Luxury Home" onerror="this.src='https://placehold.co/1920x1080/0f172a/ffffff?text=Jubilee+Real+Estate'" class="w-full h-full object-cover opacity-80">
+                    <div class="absolute inset-0 bg-gradient-to-r from-dark via-dark/80 to-transparent"></div>
+                </div>
+                
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                    <div class="max-w-2xl">
+                        <span data-i18n="heroBadge" class="inline-block py-1 px-3 rounded-full bg-primary/20 text-emerald-300 text-sm font-semibold mb-4 border border-primary/30">#1 Real Estate Platform</span>
+                        <h1 data-i18n="heroTitle" class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+                            Find Your Perfect <br><span class="text-emerald-400">Place in Thailand</span>
+                        </h1>
+                        <p data-i18n="heroSub" class="text-lg md:text-xl text-gray-300 mb-10 drop-shadow">
+                            From university dorms in Phitsanulok to luxury condos in Bangkok, discover the best properties tailored to your lifestyle.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Quick Search -->
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-20 mb-16">
+                <div class="bg-white rounded-2xl shadow-2xl p-4 md:p-6 border border-gray-100">
+                    <form onsubmit="executeQuickSearch(event)" class="flex flex-col md:flex-row gap-3">
+                        <div class="w-full md:w-2/5 relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="ph ph-magnifying-glass text-gray-400 text-lg"></i>
+                            </div>
+                            <input type="text" id="quick-search-text" data-i18n-placeholder="plcSearch" placeholder="Search location, condo name..." class="w-full bg-slate-50 border border-slate-200 text-gray-900 py-3.5 pl-11 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                        </div>
+                        <div class="w-full md:w-1/4 relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="ph ph-tag text-gray-400 text-lg"></i>
+                            </div>
+                            <select id="quick-status" class="w-full bg-slate-50 border border-slate-200 text-gray-900 py-3.5 pl-11 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all appearance-none cursor-pointer">
+                                <option value="all" data-i18n="optAnyStatus">Any Status</option>
+                                <option value="rent" data-i18n="optForRent">For Rent</option>
+                                <option value="buy" data-i18n="optForSale">For Sale</option>
+                            </select>
+                        </div>
+                        <div class="w-full md:w-auto flex-grow">
+                            <button type="submit" class="w-full bg-primary hover:bg-primaryHover text-white py-3.5 px-6 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-xl flex justify-center items-center gap-2">
+                                <span data-i18n="btnSearch">Search</span> <i class="ph ph-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Featured Properties -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h2 data-i18n="featTitle" class="text-3xl font-bold text-dark mb-2">Featured Listings</h2>
+                        <p data-i18n="featSub" class="text-gray-500">Curated properties across Thailand.</p>
+                    </div>
+                    <button onclick="navigate('properties')" class="hidden md:inline-flex items-center gap-2 text-primary hover:text-primaryHover font-semibold transition-colors">
+                        <span data-i18n="btnViewAll">View All</span> <i class="ph ph-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <div id="featured-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Populated by JS -->
+                </div>
+                
+                <div class="mt-8 text-center md:hidden">
+                    <button onclick="navigate('properties')" class="w-full py-3 bg-primary/10 text-primary rounded-xl font-bold">
+                        <span data-i18n="btnViewAll">View All Properties</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Why Choose Us -->
+            <div class="bg-white py-16 mt-8 border-t border-gray-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto mb-12">
+                        <h2 data-i18n="whyTitle" class="text-3xl font-bold text-dark mb-4">Why Jubilee Real Estate?</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary/30 transition-colors">
+                            <div class="w-14 h-14 bg-emerald-100 text-primary rounded-xl flex items-center justify-center mb-6">
+                                <i class="ph ph-student text-3xl"></i>
+                            </div>
+                            <h3 data-i18n="why1Title" class="text-xl font-bold text-dark mb-2">Student & Campus Focus</h3>
+                            <p data-i18n="why1Sub" class="text-gray-500 leading-relaxed">Extensive listings around major universities like Naresuan University, making student living easy.</p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary/30 transition-colors">
+                            <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+                                <i class="ph ph-city text-3xl"></i>
+                            </div>
+                            <h3 data-i18n="why2Title" class="text-xl font-bold text-dark mb-2">City & Luxury Living</h3>
+                            <p data-i18n="why2Sub" class="text-gray-500 leading-relaxed">Premium condos and houses in Bangkok, Chiang Mai, and Phuket for professionals and families.</p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary/30 transition-colors">
+                            <div class="w-14 h-14 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-6">
+                                <i class="ph ph-handshake text-3xl"></i>
+                            </div>
+                            <h3 data-i18n="why3Title" class="text-xl font-bold text-dark mb-2">Direct Connections</h3>
+                            <p data-i18n="why3Sub" class="text-gray-500 leading-relaxed">Post your requirements directly to our platform and let owners and agents come to you.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom CTA -->
+            <div class="bg-primary py-16">
+                <div class="max-w-4xl mx-auto px-4 text-center">
+                    <h2 data-i18n="ctaTitle" class="text-3xl md:text-4xl font-bold text-white mb-4">Can't find what you're looking for?</h2>
+                    <p data-i18n="ctaSub" class="text-emerald-100 mb-8 text-lg">Post your specific requirements and let our network find it for you.</p>
+                    <button onclick="navigate('looking')" class="bg-white text-primary hover:bg-slate-50 px-8 py-4 rounded-xl font-bold text-lg shadow-xl transition-transform hover:-translate-y-1 inline-flex items-center gap-2">
+                        <i class="ph ph-megaphone text-2xl"></i> <span data-i18n="ctaBtn">Post a Requirement</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PROPERTIES PAGE ================= -->
+        <div id="page-properties" class="page-section hidden bg-slate-50">
+            <!-- Search & Filter Header -->
+            <div class="bg-white border-b border-gray-200 sticky top-16 z-40 shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    
+                    <!-- Main Search and Sort Row -->
+                    <div class="flex flex-col md:flex-row gap-4 items-center">
+                        
+                        <!-- Text Search Bar -->
+                        <div class="w-full md:flex-grow relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph ph-magnifying-glass text-gray-400 text-lg"></i>
+                            </div>
+                            <input type="text" id="prop-search-text" data-i18n-placeholder="plcSearchFull" placeholder="Search by name, location, or keyword..." class="w-full bg-slate-100 border-transparent focus:bg-white border focus:border-primary text-gray-900 py-2.5 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                        </div>
+                        
+                        <div class="w-full md:w-auto flex flex-row gap-3">
+                            <!-- Sort Dropdown -->
+                            <div class="relative flex-1 md:w-56 min-w-0">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="ph ph-sort-ascending text-gray-500"></i>
+                                </div>
+                                <select id="prop-sort" onchange="applyFiltersAndSort()" class="w-full bg-white border border-gray-300 text-gray-700 py-2.5 pl-9 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary appearance-none cursor-pointer text-sm font-medium text-ellipsis">
+                                    <option value="default" data-i18n="sortDefault">Sort By: Default</option>
+                                    <option value="price-asc" data-i18n="sortPriceAsc">Price: Low to High</option>
+                                    <option value="price-desc" data-i18n="sortPriceDesc">Price: High to Low</option>
+                                    <option value="size-asc" data-i18n="sortSizeAsc">Size: Small to Large</option>
+                                    <option value="size-desc" data-i18n="sortSizeDesc">Size: Large to Small</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Filter Toggle Button -->
+                            <button onclick="toggleFilters()" id="btn-toggle-filters" class="flex-shrink-0 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium text-sm flex justify-center items-center gap-2 transition-colors whitespace-nowrap">
+                                <i class="ph ph-faders"></i> <span data-i18n="btnFilters">Filters</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Filters Panel -->
+                    <div id="advanced-filters-panel" class="advanced-filters">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label data-i18n="lblStatus" class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Status</label>
+                                <select id="prop-filter-status" onchange="applyFiltersAndSort()" class="w-full bg-white border border-gray-200 text-gray-700 py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-sm">
+                                    <option value="all" data-i18n="optAnyStatus">Any Status</option>
+                                    <option value="rent" data-i18n="optForRent">For Rent</option>
+                                    <option value="buy" data-i18n="optForSale">For Sale</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label data-i18n="lblType" class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Property Type</label>
+                                <select id="prop-filter-type" onchange="applyFiltersAndSort()" class="type-select w-full bg-white border border-gray-200 text-gray-700 py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-sm">
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            <div>
+                                <label data-i18n="lblBeds" class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Bedrooms</label>
+                                <select id="prop-filter-beds" onchange="applyFiltersAndSort()" class="w-full bg-white border border-gray-200 text-gray-700 py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-sm">
+                                    <option value="all" data-i18n="optAnyBeds">Any Beds</option>
+                                    <option value="1" data-i18n="opt1Beds">1+ Beds</option>
+                                    <option value="2" data-i18n="opt2Beds">2+ Beds</option>
+                                    <option value="3" data-i18n="opt3Beds">3+ Beds</option>
+                                    <option value="4" data-i18n="opt4Beds">4+ Beds</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="resetPropertiesSearch()" class="w-full py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md font-medium text-sm transition-colors">
+                                    <span data-i18n="btnClearFilters">Clear All Filters</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Results Grid -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 data-i18n="resTitle" class="text-2xl font-bold text-dark">Properties</h2>
+                    <span id="results-count" class="text-gray-600 text-sm font-medium bg-white px-3 py-1 rounded-full shadow-sm border border-gray-100">Showing 0 properties</span>
+                </div>
+
+                <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div id="no-results" class="hidden text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm mt-4">
+                    <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="ph ph-house-line text-4xl text-gray-400"></i>
+                    </div>
+                    <h3 data-i18n="noResTitle" class="text-xl font-bold text-gray-900">No properties found</h3>
+                    <p data-i18n="noResSub" class="text-gray-500 mt-2">Try adjusting your search or filters.</p>
+                    <button onclick="resetPropertiesSearch()" class="mt-6 px-6 py-2 bg-primary text-white rounded-lg font-medium shadow-sm hover:bg-primaryHover">
+                        <span data-i18n="btnResetSearch">Reset Search</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= LOOKING PAGE ================= -->
+        <div id="page-looking" class="page-section hidden bg-slate-50 pb-16">
+            <div class="bg-dark py-12 px-4 text-center">
+                <h1 data-i18n="lookHeroTitle" class="text-3xl md:text-4xl font-bold text-white mb-3">Post a Requirement</h1>
+                <p data-i18n="lookHeroSub" class="text-gray-400 max-w-2xl mx-auto text-lg">Looking for a specific property? Post your needs here and agents will contact you directly.</p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden p-6 sm:p-10 border border-gray-100">
+                    <form onsubmit="submitRequirement(event)" class="space-y-8">
+                        
+                        <div>
+                            <div class="flex items-center gap-2 border-b border-gray-100 pb-3 mb-6">
+                                <i class="ph ph-clipboard-text text-xl text-primary"></i>
+                                <h3 data-i18n="formReqHeader" class="text-xl font-bold text-gray-900">Property Requirements</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Type of need -->
+                                <div class="md:col-span-2">
+                                    <label data-i18n="formAnnType" class="block text-sm font-semibold text-gray-700 mb-3">I want to... *</label>
+                                    <div class="flex flex-wrap gap-3">
+                                        <label class="flex-1 min-w-[120px] flex items-center justify-center gap-2 cursor-pointer bg-slate-50 border border-slate-200 py-3 px-4 rounded-xl hover:bg-emerald-50 hover:border-primary hover:text-primary transition-all group">
+                                            <input type="radio" name="req_type" value="buy" required class="accent-primary w-4 h-4">
+                                            <span data-i18n="radBuy" class="font-medium">Buy</span>
+                                        </label>
+                                        <label class="flex-1 min-w-[120px] flex items-center justify-center gap-2 cursor-pointer bg-slate-50 border border-slate-200 py-3 px-4 rounded-xl hover:bg-emerald-50 hover:border-primary hover:text-primary transition-all">
+                                            <input type="radio" name="req_type" value="rent" class="accent-primary w-4 h-4">
+                                            <span data-i18n="radRent" class="font-medium">Rent</span>
+                                        </label>
+                                        <label class="flex-1 min-w-[120px] flex items-center justify-center gap-2 cursor-pointer bg-slate-50 border border-slate-200 py-3 px-4 rounded-xl hover:bg-emerald-50 hover:border-primary hover:text-primary transition-all">
+                                            <input type="radio" name="req_type" value="lease" class="accent-primary w-4 h-4">
+                                            <span data-i18n="radLease" class="font-medium">Lease / Business</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Property Type -->
+                                <div class="md:col-span-2">
+                                    <label data-i18n="formPropType" class="block text-sm font-semibold text-gray-700 mb-2">Property Type *</label>
+                                    <select id="look-type" required class="full-type-select w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all cursor-pointer">
+                                        <!-- Populated dynamically -->
+                                    </select>
+                                </div>
+
+                                <!-- Province -->
+                                <div>
+                                    <label data-i18n="formProvince" class="block text-sm font-semibold text-gray-700 mb-2">Province *</label>
+                                    <select id="look-province" required onchange="updateDistricts()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all cursor-pointer">
+                                        <!-- Populated dynamically -->
+                                    </select>
+                                </div>
+
+                                <!-- District -->
+                                <div>
+                                    <label data-i18n="formDistrict" class="block text-sm font-semibold text-gray-700 mb-2">District</label>
+                                    <select id="look-district" disabled class="w-full bg-gray-100 border border-slate-200 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all cursor-pointer text-gray-500">
+                                        <option value="" disabled selected data-i18n="optSelectDist">-- Select Province First --</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Details -->
+                                <div class="md:col-span-2">
+                                    <label data-i18n="formAddDetails" class="block text-sm font-semibold text-gray-700 mb-2">Additional Details</label>
+                                    <textarea data-i18n-placeholder="formAddDetailsPl" rows="4" placeholder="Specific requirements, preferred locations (e.g., near Naresuan Uni Gate 4), budget..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Info Section -->
+                        <div>
+                            <div class="flex items-center gap-2 border-b border-gray-100 pb-3 mb-6 mt-4">
+                                <i class="ph ph-user text-xl text-primary"></i>
+                                <h3 data-i18n="formContHeader" class="text-xl font-bold text-gray-900">Contact Information</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label data-i18n="formName" class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
+                                    <input type="text" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all">
+                                </div>
+                                <div>
+                                    <label data-i18n="formPhone" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number *</label>
+                                    <input type="tel" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all">
+                                </div>
+                                <div>
+                                    <label data-i18n="formEmail" class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                                    <input type="email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all">
+                                </div>
+                                <div>
+                                    <label data-i18n="formLine" class="block text-sm font-semibold text-gray-700 mb-2">Line ID</label>
+                                    <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-gray-100">
+                            <button type="submit" class="w-full bg-primary hover:bg-primaryHover text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all flex justify-center items-center gap-2">
+                                <i class="ph ph-paper-plane-tilt text-xl"></i> <span data-i18n="formSubmit">Post Requirement</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CONTACT PAGE ================= -->
+        <div id="page-contact" class="page-section hidden bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="text-center mb-12">
+                    <h1 data-i18n="contactHeroTitle" class="text-3xl md:text-4xl font-bold text-dark mb-4">Contact Jubilee Real Estate</h1>
+                    <p data-i18n="contactHeroSub" class="text-gray-500 max-w-2xl mx-auto text-lg">Our team is ready to help you with all your real estate needs.</p>
+                </div>
+                
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-gray-100 max-w-5xl mx-auto">
+                    <!-- Info Sidebar -->
+                    <div class="bg-dark text-white p-8 lg:p-12 lg:w-2/5 flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-primary/20 blur-3xl"></div>
+                        <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 rounded-full bg-blue-500/20 blur-3xl"></div>
+                        
+                        <div class="relative z-10 h-full flex flex-col">
+                            <h3 data-i18n="contInfoTitle" class="text-2xl font-bold mb-8">Get in Touch</h3>
+                            <div class="space-y-8 flex-grow">
+                                <div class="flex items-start gap-4">
+                                    <div class="bg-white/10 p-3 rounded-lg"><i class="ph ph-map-pin text-2xl text-emerald-400"></i></div>
+                                    <div>
+                                        <p data-i18n="contHQ" class="font-medium text-lg">Main Office</p>
+                                        <p class="text-gray-300 mt-1 text-sm leading-relaxed">4475 ถ. สุขุมวิท แขวงบางนาใต้<br>เขตบางนา กรุงเทพมหานคร 10260</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="bg-white/10 p-3 rounded-lg"><i class="ph ph-phone text-2xl text-emerald-400"></i></div>
+                                    <div>
+                                        <p data-i18n="contPhone" class="font-medium text-lg">Phone</p>
+                                        <p class="text-gray-300 mt-1 text-sm">088 7029 888</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="bg-white/10 p-3 rounded-lg"><i class="ph ph-chat-circle text-2xl text-emerald-400"></i></div>
+                                    <div>
+                                        <p class="font-medium text-lg">LINE</p>
+                                        <p class="text-gray-300 mt-1 text-sm">0887029888</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="bg-white/10 p-3 rounded-lg"><i class="ph ph-wechat-logo text-2xl text-emerald-400"></i></div>
+                                    <div>
+                                        <p class="font-medium text-lg">WeChat</p>
+                                        <p class="text-gray-300 mt-1 text-sm">Jubilee99888</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="bg-white/10 p-3 rounded-lg"><i class="ph ph-telegram-logo text-2xl text-emerald-400"></i></div>
+                                    <div>
+                                        <p class="font-medium text-lg">Telegram</p>
+                                        <p class="text-gray-300 mt-1 text-sm">@Jubilee99888</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Form -->
+                    <div class="p-8 lg:p-12 lg:w-3/5 bg-slate-50">
+                        <h3 data-i18n="contFormTitle" class="text-2xl font-bold text-dark mb-6">Send us a message</h3>
+                        <form onsubmit="submitContact(event)" class="space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label data-i18n="contFName" class="block text-sm font-semibold text-gray-700 mb-1.5">First Name</label>
+                                    <input type="text" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                                </div>
+                                <div>
+                                    <label data-i18n="contLName" class="block text-sm font-semibold text-gray-700 mb-1.5">Last Name</label>
+                                    <input type="text" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                                </div>
+                            </div>
+                            <div>
+                                <label data-i18n="contEmailAddr" class="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
+                                <input type="email" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all">
+                            </div>
+                            <div>
+                                <label data-i18n="contMsg" class="block text-sm font-semibold text-gray-700 mb-1.5">Message</label>
+                                <textarea rows="4" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary transition-all"></textarea>
+                            </div>
+                            <button type="submit" class="w-full px-8 py-3.5 bg-primary hover:bg-primaryHover text-white font-bold rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
+                                <span data-i18n="contSendBtn">Send Message</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
+            <div class="flex flex-col md:flex-row items-center gap-3">
+                <img src="./img/logo.jpg" alt="Jubilee Logo" class="h-10 object-contain grayscale opacity-60 hidden md:block">
+                <div class="text-center md:text-left">
+                    <span class="font-bold text-dark text-base">Jubilee Real Estate Co.,Ltd.</span><br>
+                    <span class="text-xs">ทะเบียนนิติบุคคลเลขที่ 0105569020674 | 4475 ถ. สุขุมวิท แขวงบางนาใต้ เขตบางนา กทม. 10260</span>
+                </div>
+            </div>
+            <div class="text-center md:text-right">
+                &copy; 2026. <span data-i18n="footerRights">All rights reserved.</span>
+                <div class="flex justify-center md:justify-end space-x-6 mt-2">
+                    <a href="#" data-i18n="footerPrivacy" class="hover:text-primary transition-colors">Privacy Policy</a>
+                    <a href="#" data-i18n="footerTerms" class="hover:text-primary transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Property Detail Modal -->
+    <div id="property-modal" class="fixed inset-0 z-[100] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col md:flex-row overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300" id="modal-content-container">
+            
+            <!-- Modal Image Side -->
+            <div class="relative h-64 md:h-auto md:w-1/2 bg-gray-200 flex-shrink-0">
+                <img id="modal-image" src="" alt="Property" onerror="this.src='https://placehold.co/800x600/e2e8f0/475569?text=Property'" class="w-full h-full object-cover">
+                <button onclick="closeModal()" class="md:hidden absolute top-4 right-4 bg-white/90 backdrop-blur text-gray-800 p-2 rounded-full shadow z-10">
+                    <i class="ph ph-x font-bold"></i>
+                </button>
+                <div class="absolute top-4 left-4 z-10 flex gap-2">
+                    <span id="modal-badge" class="px-3 py-1.5 rounded-full text-sm font-bold shadow-md tracking-wide"></span>
+                    <span id="modal-ref-badge" class="px-3 py-1.5 rounded-full text-sm font-bold shadow-md tracking-wide bg-white text-dark border border-gray-200"></span>
+                </div>
+                <div class="absolute bottom-4 left-4 z-10">
+                    <span id="modal-type-badge" class="bg-dark/80 backdrop-blur text-white px-3 py-1 rounded-lg text-sm font-medium"></span>
+                </div>
+            </div>
+            
+            <!-- Modal Content Side -->
+            <div class="p-6 md:p-8 md:w-1/2 overflow-y-auto flex flex-col bg-white no-scrollbar">
+                <div class="flex justify-between items-start mb-2">
+                    <h2 id="modal-title" class="text-2xl md:text-3xl font-bold text-gray-900 leading-tight pr-4"></h2>
+                    <div class="flex items-center flex-shrink-0">
+                        <!-- Share Dropdown -->
+                        <div class="relative inline-block text-left">
+                            <button onclick="toggleShareMenu()" class="text-gray-500 hover:text-primary bg-gray-100 hover:bg-emerald-50 w-10 h-10 rounded-full transition-colors flex items-center justify-center">
+                                <i class="ph ph-share-network font-bold text-lg"></i>
+                            </button>
+                            <div id="share-menu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-gray-100 z-50 overflow-hidden">
+                                <button onclick="shareTo('facebook')" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 border-b border-gray-50"><i class="ph ph-facebook-logo text-blue-600 text-lg"></i> Facebook</button>
+                                <button onclick="shareTo('line')" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 border-b border-gray-50"><i class="ph ph-chat-circle text-green-500 text-lg"></i> Line</button>
+                                <button onclick="shareTo('whatsapp')" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 border-b border-gray-50"><i class="ph ph-whatsapp-logo text-green-600 text-lg"></i> WhatsApp</button>
+                                <button onclick="shareTo('telegram')" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 border-b border-gray-50"><i class="ph ph-telegram-logo text-blue-500 text-lg"></i> Telegram</button>
+                                <button onclick="shareTo('wechat')" class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"><i class="ph ph-wechat-logo text-emerald-500 text-lg"></i> WeChat</button>
+                            </div>
+                        </div>
+                        <button onclick="closeModal()" class="hidden md:flex ml-2 text-gray-400 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 w-10 h-10 rounded-full transition-colors items-center justify-center">
+                            <i class="ph ph-x font-bold text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <p class="text-gray-500 flex items-start gap-2 mb-4">
+                    <i class="ph ph-map-pin text-gray-400 text-lg mt-0.5"></i> <span id="modal-address"></span>
+                </p>
+                
+                <div class="flex items-baseline gap-3 mb-6">
+                    <div class="text-3xl font-bold text-primary" id="modal-price"></div>
+                    <div class="text-sm font-medium text-gray-400 bg-gray-100 px-2 py-1 rounded" id="modal-price-sqm"></div>
+                </div>
+
+                <!-- Core Stats Grid -->
+                <div class="grid grid-cols-3 gap-3 border-y border-gray-100 py-6 mb-6">
+                    <div class="flex flex-col items-center justify-center bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <i class="ph ph-bed text-2xl text-gray-500 mb-1"></i>
+                        <span id="modal-beds" class="font-bold text-gray-900 text-lg"></span>
+                        <span data-i18n="modalBeds" class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Beds</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-center bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <i class="ph ph-bathtub text-2xl text-gray-500 mb-1"></i>
+                        <span id="modal-baths" class="font-bold text-gray-900 text-lg"></span>
+                        <span data-i18n="modalBaths" class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Baths</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-center bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <i class="ph ph-squares-four text-2xl text-gray-500 mb-1"></i>
+                        <span id="modal-area" class="font-bold text-gray-900 text-lg"></span>
+                        <span data-i18n="modalArea" class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Sq M</span>
+                    </div>
+                </div>
+
+                <!-- Secondary Stats -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <span data-i18n="modalFloor" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Floor</span>
+                        <div class="font-medium text-gray-800 flex items-center gap-2"><i class="ph ph-elevator text-gray-400"></i> <span id="modal-floor"></span></div>
+                    </div>
+                    <div>
+                        <span data-i18n="modalFurnish" class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Furnishing</span>
+                        <div class="font-medium text-gray-800 flex items-center gap-2"><i class="ph ph-armchair text-gray-400"></i> <span id="modal-furnish"></span></div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-8">
+                    <h3 data-i18n="modalDescTitle" class="text-lg font-bold text-gray-900 mb-3 border-l-4 border-primary pl-3">Description</h3>
+                    <p id="modal-description" class="text-gray-600 leading-relaxed text-sm whitespace-pre-line"></p>
+                </div>
+
+                <!-- Amenities -->
+                <div class="mb-8">
+                    <h3 data-i18n="modalAmenities" class="text-lg font-bold text-gray-900 mb-4 border-l-4 border-primary pl-3">Amenities</h3>
+                    <div id="modal-amenities" class="grid grid-cols-2 gap-y-3 gap-x-4 text-sm text-gray-700">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Agent Contact Box -->
+                <div class="mt-auto pt-6 border-t border-gray-100">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex flex-col sm:flex-row items-center gap-4">
+                        <div class="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-full overflow-hidden border-2 border-white shadow-md">
+                            <img id="modal-agent-img" src="" alt="Agent" onerror="this.src='https://ui-avatars.com/api/?name=Agent&background=059669&color=fff'" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow text-center sm:text-left">
+                            <h4 id="modal-agent-name" class="font-bold text-gray-900 text-lg"></h4>
+                            <p id="modal-agent-agency" class="text-primary font-medium text-sm mb-2"></p>
+                            <div class="flex flex-wrap justify-center sm:justify-start gap-x-4 gap-y-1 text-xs text-gray-600">
+                                <span class="flex items-center gap-1"><i class="ph ph-phone text-blue-500"></i> <span id="modal-agent-tel" class="font-medium"></span></span>
+                                <span class="flex items-center gap-1"><i class="ph ph-chat-circle text-green-500"></i> LINE: <span id="modal-agent-line" class="font-medium"></span></span>
+                                <span class="flex items-center gap-1"><i class="ph ph-wechat-logo text-emerald-500"></i> WeChat: <span id="modal-agent-wc" class="font-medium"></span></span>
+                            </div>
+                        </div>
+                        <button onclick="navigate('contact'); closeModal();" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-dark hover:bg-black text-white font-bold transition-colors shadow-lg flex justify-center items-center gap-2 whitespace-nowrap">
+                            <i class="ph ph-calendar-plus text-lg"></i> <span data-i18n="btnBook">Book Viewing</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WeChat Share Modal -->
+    <div id="wechat-modal" class="fixed inset-0 z-[200] hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="wechat-modal-content">
+            <div class="p-5 text-center border-b border-gray-100 relative">
+                <button onclick="closeWechatModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
+                    <i class="ph ph-x font-bold"></i>
+                </button>
+                <img src="./img/logo.jpg" alt="Jubilee Real Estate" class="h-12 mx-auto mb-3 object-contain">
+                <h3 class="font-bold text-gray-900 text-lg" data-i18n="wechatScan">Scan to Share on WeChat</h3>
+            </div>
+            <div class="p-8 bg-slate-50 flex justify-center border-b border-gray-100">
+                <div class="p-2 bg-white rounded-2xl shadow-sm border border-gray-200">
+                    <img id="wechat-qr" src="" alt="QR Code" class="w-48 h-48">
+                </div>
+            </div>
+            <div class="p-5 bg-white flex items-center gap-4">
+                <img id="wechat-agent-img" src="" alt="Agent" class="w-14 h-14 rounded-full object-cover border border-gray-200 shadow-sm">
+                <div class="text-left">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5" data-i18n="modalAgent">Contact Agent</p>
+                    <p id="wechat-agent-name" class="font-bold text-gray-900 text-sm leading-tight"></p>
+                    <p class="text-xs text-emerald-600 font-medium flex items-center gap-1 mt-1"><i class="ph ph-wechat-logo"></i> Jubilee99888</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 z-[200] bg-dark text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
+        <i class="ph ph-check-circle text-emerald-400 text-2xl"></i>
+        <span id="toast-msg" class="font-medium">Success!</span>
+    </div>
+
+    <script>
+        // State
+        let currentLang = 'th';
+        let filtersOpen = false;
+        let currentProp = null; // Store current property for sharing
+
+        // Translations Dictionary
+        const translations = {
+            en: {
+                navHome: "Home", navProperties: "Properties", navLooking: "Looking", navContact: "Contact", navAddListing: "Post Requirement",
+                heroBadge: "#1 Real Estate Platform", heroTitle: "Find Your Perfect <br><span class='text-emerald-400'>Place in Thailand</span>",
+                heroSub: "From university dorms in Phitsanulok to luxury condos in Bangkok, discover the best properties tailored to your lifestyle.",
+                plcSearch: "Search location, condo name...", plcSearchFull: "Search by name, location, or keyword...",
+                lblStatus: "Status", lblType: "Property Type", lblBeds: "Bedrooms",
+                optAnyStatus: "Any Status", optForRent: "For Rent", optForSale: "For Sale",
+                optAnyBeds: "Any Beds", opt1Beds: "1+ Beds", opt2Beds: "2+ Beds", opt3Beds: "3+ Beds", opt4Beds: "4+ Beds",
+                btnSearch: "Search", btnResetSearch: "Reset Search", btnFilters: "Advanced Filters", btnClearFilters: "Clear All Filters",
+                sortDefault: "Sort By: Default", sortPriceAsc: "Price: Low to High", sortPriceDesc: "Price: High to Low", sortSizeAsc: "Size: Small to Large", sortSizeDesc: "Size: Large to Small",
+                featTitle: "Featured Listings", featSub: "Curated properties across Thailand.", btnViewAll: "View All",
+                whyTitle: "Why Jubilee Real Estate?", 
+                why1Title: "Student & Campus Focus", why1Sub: "Extensive listings around major universities like Naresuan University, making student living easy.",
+                why2Title: "City & Luxury Living", why2Sub: "Premium condos and houses in Bangkok, Chiang Mai, and Phuket for professionals and families.",
+                why3Title: "Direct Connections", why3Sub: "Post your requirements directly to our platform and let owners and agents come to you.",
+                ctaTitle: "Can't find what you're looking for?", ctaSub: "Post your specific requirements and let our network find it for you.", ctaBtn: "Post a Requirement",
+                resTitle: "Properties", noResTitle: "No properties found", noResSub: "Try adjusting your search or filters.",
+                lookHeroTitle: "Post a Requirement", lookHeroSub: "Looking for a specific property? Post your needs here and agents will contact you directly.",
+                formReqHeader: "Property Requirements", formAnnType: "I want to... *", radBuy: "Buy", radRent: "Rent", radLease: "Lease/Business",
+                formPropType: "Property Type *", formProvince: "Province *", formDistrict: "District", formAddDetails: "Additional Details", formAddDetailsPl: "Specific requirements, preferred locations, budget...",
+                formContHeader: "Contact Information", formName: "Full Name *", formPhone: "Phone Number *", formEmail: "Email *", formLine: "Line ID", formSubmit: "Post Requirement",
+                contactHeroTitle: "Contact Jubilee Real Estate", contactHeroSub: "Our team is ready to help you with all your real estate needs.",
+                contInfoTitle: "Get in Touch", contHQ: "Main Office", contPhone: "Phone", contEmail: "Email",
+                contFormTitle: "Send us a message", contFName: "First Name", contLName: "Last Name", contEmailAddr: "Email Address", contMsg: "Message", contSendBtn: "Send Message",
+                footerRights: "All rights reserved.", footerPrivacy: "Privacy Policy", footerTerms: "Terms of Service",
+                modalBeds: "Beds", modalBaths: "Baths", modalArea: "Sq M", modalDescTitle: "Description", 
+                modalFloor: "Floor", modalFurnish: "Furnishing", modalAmenities: "Amenities", modalAgent: "Contact Agent", btnBook: "Book Viewing",
+                lblMonth: "/ mo", lblSqm: "/ sqm", txtShowing: "Showing", txtPropS: "properties", txtPropSingular: "property",
+                optSelectType: "-- Select Type --", optSelectProv: "-- Select Province --", optSelectDist: "-- Select District --",
+                msgReqSuccess: "Requirement posted successfully!", msgContSuccess: "Message sent! We'll be in touch.",
+                wechatScan: "Scan to Share on WeChat"
+            },
+            th: {
+                navHome: "หน้าแรก", navProperties: "ค้นหาอสังหาฯ", navLooking: "ลงประกาศหา", navContact: "ติดต่อเรา", navAddListing: "ลงประกาศความต้องการ",
+                heroBadge: "แพลตฟอร์มอสังหาฯ อันดับ 1", heroTitle: "ค้นหาสถานที่<br><span class='text-emerald-400'>ที่ใช่สำหรับคุณ</span>",
+                heroSub: "ตั้งแต่หอพักนักศึกษาในพิษณุโลกไปจนถึงคอนโดหรูในกรุงเทพฯ ค้นพบอสังหาริมทรัพย์ที่ดีที่สุดที่เหมาะกับไลฟ์สไตล์ของคุณ",
+                plcSearch: "ค้นหาทำเล, ชื่อคอนโด...", plcSearchFull: "ค้นหาจากชื่อ, ทำเล, หรือคำค้นหา...",
+                lblStatus: "สถานะ", lblType: "ประเภทอสังหาฯ", lblBeds: "ห้องนอน",
+                optAnyStatus: "ทุกสถานะ", optForRent: "ให้เช่า", optForSale: "ขาย",
+                optAnyBeds: "ทุกแบบ", opt1Beds: "1+ ห้องนอน", opt2Beds: "2+ ห้องนอน", opt3Beds: "3+ ห้องนอน", opt4Beds: "4+ ห้องนอน",
+                btnSearch: "ค้นหา", btnResetSearch: "ล้างการค้นหา", btnFilters: "ตัวกรองขั้นสูง", btnClearFilters: "ล้างตัวกรองทั้งหมด",
+                sortDefault: "เรียงตาม: ค่าเริ่มต้น", sortPriceAsc: "ราคา: ต่ำไปสูง", sortPriceDesc: "ราคา: สูงไปต่ำ", sortSizeAsc: "ขนาด: เล็กไปใหญ่", sortSizeDesc: "ขนาด: ใหญ่ไปเล็ก",
+                featTitle: "อสังหาริมทรัพย์แนะนำ", featSub: "ที่พักคัดสรรพิเศษทั่วประเทศไทย", btnViewAll: "ดูทั้งหมด",
+                whyTitle: "ทำไมต้อง Jubilee Real Estate?", 
+                why1Title: "ตอบโจทย์นักศึกษา", why1Sub: "รวบรวมที่พักรอบมหาวิทยาลัยชั้นนำ เช่น มหาวิทยาลัยนเรศวร ทำให้ชีวิตนักศึกษาง่ายขึ้น",
+                why2Title: "ชีวิตคนเมือง & หรูหรา", why2Sub: "คอนโดและบ้านระดับพรีเมียมในกรุงเทพฯ เชียงใหม่ และภูเก็ต สำหรับวัยทำงานและครอบครัว",
+                why3Title: "เชื่อมต่อโดยตรง", why3Sub: "ลงประกาศความต้องการของคุณบนแพลตฟอร์มของเรา แล้วให้เจ้าของและตัวแทนติดต่อคุณเอง",
+                ctaTitle: "ยังหาสิ่งที่ต้องการไม่เจอ?", ctaSub: "ลงประกาศความต้องการเฉพาะของคุณ แล้วให้เครือข่ายของเราช่วยค้นหาให้คุณ", ctaBtn: "ลงประกาศความต้องการ",
+                resTitle: "อสังหาริมทรัพย์", noResTitle: "ไม่พบอสังหาริมทรัพย์", noResSub: "ลองปรับคำค้นหาหรือตัวกรองของคุณ",
+                lookHeroTitle: "ลงประกาศความต้องการ", lookHeroSub: "กำลังมองหาอสังหาฯ แบบเฉพาะเจาะจง? ลงประกาศความต้องการที่นี่ แล้วตัวแทนจะติดต่อกลับ",
+                formReqHeader: "รายละเอียดความต้องการ", formAnnType: "ฉันต้องการ... *", radBuy: "ซื้อ", radRent: "เช่า", radLease: "เซ้ง / กิจการ",
+                formPropType: "ประเภทอสังหาฯ *", formProvince: "จังหวัด *", formDistrict: "เขต/อำเภอ", formAddDetails: "รายละเอียดเพิ่มเติม", formAddDetailsPl: "ความต้องการเฉพาะ, ทำเลที่ต้องการ, งบประมาณ...",
+                formContHeader: "ข้อมูลติดต่อ", formName: "ชื่อ-นามสกุล *", formPhone: "เบอร์โทรศัพท์ *", formEmail: "อีเมล *", formLine: "ไลน์ไอดี", formSubmit: "ส่งประกาศ",
+                contactHeroTitle: "ติดต่อ Jubilee Real Estate", contactHeroSub: "ทีมงานของเราพร้อมช่วยเหลือคุณในทุกเรื่องเกี่ยวกับอสังหาริมทรัพย์",
+                contInfoTitle: "ช่องทางการติดต่อ", contHQ: "สำนักงานใหญ่", contPhone: "เบอร์โทร", contEmail: "อีเมล",
+                contFormTitle: "ส่งข้อความถึงเรา", contFName: "ชื่อ", contLName: "นามสกุล", contEmailAddr: "ที่อยู่อีเมล", contMsg: "ข้อความ", contSendBtn: "ส่งข้อความ",
+                footerRights: "สงวนลิขสิทธิ์", footerPrivacy: "นโยบายความเป็นส่วนตัว", footerTerms: "ข้อกำหนดการให้บริการ",
+                modalBeds: "ห้องนอน", modalBaths: "ห้องน้ำ", modalArea: "ตร.ม.", modalDescTitle: "รายละเอียดอสังหาริมทรัพย์", 
+                modalFloor: "ชั้น", modalFurnish: "เฟอร์นิเจอร์", modalAmenities: "สิ่งอำนวยความสะดวก", modalAgent: "ผู้ดูแลรับผิดชอบ", btnBook: "นัดชมห้อง",
+                lblMonth: "/ เดือน", lblSqm: "/ ตร.ม.", txtShowing: "แสดง", txtPropS: "รายการ", txtPropSingular: "รายการ",
+                optSelectType: "-- เลือกประเภท --", optSelectProv: "-- เลือกจังหวัด --", optSelectDist: "-- เลือกเขต/อำเภอ --",
+                msgReqSuccess: "ส่งประกาศความต้องการเรียบร้อยแล้ว!", msgContSuccess: "ส่งข้อความสำเร็จ! เราจะติดต่อกลับไป",
+                wechatScan: "สแกนด้วย WeChat เพื่อแชร์"
+            }
+        };
+
+        // Complete Property Types
+        const fullTypes = [
+            { val: "Condo", th: "คอนโดมิเนียม", en: "Condominium" },
+            { val: "House", th: "บ้านเดี่ยว", en: "Detached House" },
+            { val: "Townhouse", th: "ทาวน์เฮ้าส์", en: "Townhouse" },
+            { val: "Apartment", th: "อพาร์ตเมนต์ / หอพัก", en: "Apartment / Dorm" },
+            { val: "Land", th: "ที่ดิน", en: "Land" },
+            { val: "Commercial", th: "อาคารพาณิชย์", en: "Commercial Building" },
+            { val: "Office", th: "สำนักงาน", en: "Office" },
+            { val: "Shop", th: "ร้านค้า", en: "Shop" },
+            { val: "Factory", th: "โรงงาน", en: "Factory" },
+            { val: "Warehouse", th: "โกดัง", en: "Warehouse" },
+            { val: "Other", th: "อื่นๆ", en: "Others" }
+        ];
+
+        // Geo Data
+        const locationData = {
+            "Bangkok": { 
+                th: "กรุงเทพมหานคร", en: "Bangkok", 
+                districts: [ {th:"พระนคร", en:"Phra Nakhon"}, {th:"ดุสิต", en:"Dusit"}, {th:"ปทุมวัน", en:"Pathum Wan"}, {th:"วัฒนา", en:"Watthana"}, {th:"ห้วยขวาง", en:"Huai Khwang"}, {th:"จตุจักร", en:"Chatuchak"}, {th:"บางรัก", en:"Bang Rak"} ]
+            },
+            "Phitsanulok": { 
+                th: "พิษณุโลก", en: "Phitsanulok", 
+                districts: [ {th:"เมืองพิษณุโลก (ท่าโพธิ์)", en:"Mueang (Tha Pho)"}, {th:"บางระกำ", en:"Bang Rakam"}, {th:"พรหมพิราม", en:"Phrom Phiram"}, {th:"วังทอง", en:"Wang Thong"} ]
+            },
+            "Chiang Mai": { 
+                th: "เชียงใหม่", en: "Chiang Mai", 
+                districts: [ {th:"เมืองเชียงใหม่", en:"Mueang"}, {th:"หางดง", en:"Hang Dong"}, {th:"แม่ริม", en:"Mae Rim"} ]
+            },
+            "Chonburi": { 
+                th: "ชลบุรี", en: "Chonburi", 
+                districts: [ {th:"เมืองชลบุรี", en:"Mueang"}, {th:"บางละมุง (พัทยา)", en:"Bang Lamung (Pattaya)"}, {th:"ศรีราชา", en:"Si Racha"} ]
+            },
+            "Phuket": { 
+                th: "ภูเก็ต", en: "Phuket", 
+                districts: [ {th:"เมืองภูเก็ต", en:"Mueang"}, {th:"กะทู้", en:"Kathu"}, {th:"ถลาง", en:"Thalang"} ]
+            }
+        };
+
+        // Standardized Agency Object
+        const createAgent = (name, img) => ({
+            name: name,
+            agency: "Jubilee Real Estate Co.,Ltd.",
+            tel: "088 7029 888",
+            line: "0887029888",
+            wc: "Jubilee99888",
+            img: img
+        });
+
+        // Mock Properties Data
+        const properties = [
+            {
+                id: 999, refId: "WCP-335028", status: "rent", type: "Condo", price: 32000, beds: 0, baths: 0, area: 41, floor: "9th Floor", 
+                furnishing: { en: "Fully furnished", th: "ตกแต่งครบ" },
+                image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", 
+                title: { en: "Knightsbridge Space Sukhumvit-Rama 4", th: "ไนท์บริดจ์ สเปซ สุขุมวิท-พระราม 4 ดูเพล็กซ์" },
+                address: { en: "Phra Khanong, Bangkok", th: "พระโขนง กรุงเทพมหานคร" },
+                description: { 
+                    en: "For rent: Duplex condo at Knightsbridge Space Sukhumvit-Rama 4, 41 sqm, 9th floor. Fully furnished with high-speed Wi-Fi, appliances included. Located 4 minutes walking distance from BTS Phra Khanong.\n\nRental terms: 1 month, 3-month, 6-month, 1-year", 
+                    th: "ให้เช่า: คอนโดดูเพล็กซ์ Knightsbridge Space สุขุมวิท-พระราม 4 ขนาด 41 ตร.ม. ชั้น 9 ตกแต่งครบพร้อม Wi-Fi ความเร็วสูง และเครื่องใช้ไฟฟ้า เดินเพียง 4 นาทีจาก BTS พระโขนง\n\nเงื่อนไขการเช่า: 1 เดือน, 3 เดือน, 6 เดือน, 1 ปี" 
+                },
+                amenities: ["Air conditioning", "High speed wifi", "Auto parking", "Sky lounge", "co-kitchen", "co-working space", "sauna room", "sky pool", "gym", "CCTV", "55\" Smart TV", "Refrigerator", "Electric kettle", "Oven", "Washing & drying machine (2in1)"],
+                agent: createAgent("Kaimook", "image_20b25a.jpg"),
+                featured: true
+            },
+            { 
+                id: 101, refId: "TH-1010", status: "rent", type: "Apartment", price: 4500, beds: 1, baths: 1, area: 25, floor: "3rd Floor", furnishing: {en: "Fully furnished", th: "ตกแต่งครบ"},
+                image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", 
+                title: { en: "Cozy Dorm near NU Gate 4", th: "หอพักน่าอยู่ ใกล้ม.นเรศวร ประตู 4" },
+                address: { en: "Tha Pho, Mueang Phitsanulok", th: "ต.ท่าโพธิ์ อ.เมือง พิษณุโลก" },
+                description: { en: "Fully furnished student dormitory just 5 minutes walk from Naresuan University Gate 4. Includes AC, water heater, high-speed WiFi, and 24/7 security. Perfect for students looking for convenience and safety.", th: "หอพักนักศึกษาพร้อมเฟอร์นิเจอร์ครบครัน เดินเพียง 5 นาทีจากประตู 4 มหาวิทยาลัยนเรศวร มีแอร์ เครื่องทำน้ำอุ่น WiFi ความเร็วสูง และรปภ. 24 ชม. เหมาะสำหรับนักศึกษาที่ต้องการความสะดวกและปลอดภัย" },
+                amenities: ["Air conditioning", "High speed wifi", "Water heater", "CCTV", "Keycard access", "Parking"],
+                agent: createAgent("Alice", "image_20b270.jpg"),
+                featured: true
+            },
+            { 
+                id: 102, refId: "TH-1011", status: "rent", type: "Townhouse", price: 8000, beds: 3, baths: 2, area: 120, floor: "2 Stories", furnishing: {en: "Partially furnished", th: "ตกแต่งบางส่วน"},
+                image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", 
+                title: { en: "Student Townhome Tha Pho", th: "ทาวน์โฮมสำหรับนักศึกษา ท่าโพธิ์" },
+                address: { en: "Tha Pho, Mueang Phitsanulok", th: "ต.ท่าโพธิ์ อ.เมือง พิษณุโลก" },
+                description: { en: "Spacious townhouse ideal for sharing with friends. Located near the university with plenty of food stalls and cafes nearby. Features 3 bedrooms, 2 bathrooms, and a living area.", th: "ทาวน์โฮมกว้างขวางเหมาะสำหรับแชร์กับเพื่อนๆ ตั้งอยู่ใกล้มหาวิทยาลัย มีร้านอาหารและคาเฟ่มากมายอยู่ใกล้เคียง มี 3 ห้องนอน 2 ห้องน้ำ และพื้นที่นั่งเล่น" },
+                amenities: ["Air conditioning in bedrooms", "Parking", "Living area", "Kitchen counter"],
+                agent: createAgent("Jane", "image_20b272.jpg"),
+                featured: false
+            },
+            { 
+                id: 103, refId: "TH-1012", status: "buy", type: "Condo", price: 1400000, beds: 1, baths: 1, area: 30, floor: "7th Floor", furnishing: {en: "Fully furnished", th: "ตกแต่งครบ"},
+                image: "https://scontent.fphs2-1.fna.fbcdn.net/v/t39.30808-6/304911230_398213822462659_1163301646477009085_n.jpg?stp=dst-jpg_tt6&cstp=mx1638x1638&ctp=s1638x1638&_nc_cat=107&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFz9ZqpHKsMURM1Vuo3GfsRaYzIalmK-WFpjMhqWYr5YWn4Z2xylz00ZHEJcTYJCm7mHZqz_CuYQSzH9zq4EnDV&_nc_ohc=C6WEYww9wSEQ7kNvwEWKme-&_nc_oc=AdqhdjNYRzoDrNnXCzt0UU0LEZWz1990wNvuIWJmXoTOoS_JlegtvPRACDbX5eo3bFk&_nc_zt=23&_nc_ht=scontent.fphs2-1.fna&_nc_gid=mH0NyH8_nu-p_Fqs9justw&_nc_ss=7b2a8&oh=00_AQPb5_vnRjd9uAT29ofeTeZ_puHlQxqJHC5ZtT2Dwa7FBg&oe=6AC4FA80", 
+                title: { en: "Harmony Condo Phitsanulok", th: "เดอะ ฮาร์โมนี่ คอนโด พิษณุโลก" },
+                address: { en: "Nai Muang, Mueang Phitsanulok", th: "ในเมือง อ.เมือง พิษณุโลก" },
+                description: { en: "Great investment opportunity! Modern condominium unit right in the heart of the city near bus terminal. High rental yield potential. Pool and gym facilities included.", th: "โอกาสการลงทุนที่ยอดเยี่ยม! คอนโดมิเนียมยูนิตทันสมัยใจกลางเมืองใกล้ บขส. ศักยภาพผลตอบแทนค่าเช่าสูง มีสระว่ายน้ำและฟิตเนส" },
+                amenities: ["Air conditioning", "Pool", "Gym", "Security 24/7", "Elevator", "Balcony"],
+                agent: createAgent("Sarah", "image_20b274.jpg"),
+                featured: false
+            },
+            { 
+                id: 104, refId: "TH-1014", status: "buy", type: "House", price: 4590000, beds: 4, baths: 4, area: 210, floor: "2 Stories", furnishing: {en: "Partially furnished", th: "ตกแต่งบางส่วน"},
+                image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", 
+                title: { en: "The Habitatt Elite House", th: "บ้านเดี่ยวโครงการ The Habitatt Elite" },
+                address: { en: "Mueang Phitsanulok", th: "อ.เมือง พิษณุโลก" },
+                description: { en: "Beautiful newly built detached house in a quiet neighborhood. Large garden space, 4 bedrooms, 4 bathrooms, and parking for 3 cars.", th: "บ้านเดี่ยวสร้างใหม่สวยงามในย่านที่เงียบสงบ มีพื้นที่สวนกว้างขวาง 4 ห้องนอน 4 ห้องน้ำ และจอดรถได้ 3 คัน" },
+                amenities: ["Garden", "3 Car Parking", "24/7 Security Village"],
+                agent: createAgent("Kaimook", "image_20b25a.jpg"),
+                featured: false
+            },
+            { 
+                id: 105, refId: "TH-1015", status: "buy", type: "Land", price: 119000000, beds: 0, baths: 0, area: 75200, floor: "-", furnishing: {en: "-", th: "-"},
+                image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", 
+                title: { en: "Prime Land Phitsanulok Bypass", th: "ขายที่ดิน 47 ไร่ ติดถนนเลี่ยงเมืองพิษณุโลก" },
+                address: { en: "Wang Phikun, Wang Thong", th: "วังพิกุล วังทอง พิษณุโลก" },
+                description: { en: "47 Rai of prime land located right on the Phitsanulok Bypass road. Wide frontage of 116 meters. Perfect for large scale commercial or residential development.", th: "ที่ดิน 47 ไร่ ทำเลทองติดถนนเลี่ยงเมืองพิษณุโลก หน้ากว้าง 116 เมตร เหมาะสำหรับการพัฒนาโครงการพาณิชย์หรือที่อยู่อาศัยขนาดใหญ่" },
+                amenities: ["Main Road Access", "High Visibility"],
+                agent: createAgent("Alice", "image_20b270.jpg"),
+                featured: false
+            },
+            { 
+                id: 201, refId: "TH-2010", status: "rent", type: "Condo", price: 125000, beds: 2, baths: 2, area: 170, floor: "25th Floor", furnishing: {en: "Fully furnished premium", th: "ตกแต่งพรีเมียมครบ"},
+                image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                title: { en: "The Sukhothai Residences", th: "เดอะ สุโขทัย เรสซิเด้นซ์" },
+                address: { en: "Sathon, Bangkok", th: "สาทร กรุงเทพมหานคร" },
+                description: { en: "Experience unparalleled luxury living by Sathorn road. This stunning condo offers panoramic views, high-end finishing, and exclusive residential services.", th: "สัมผัสประสบการณ์การใช้ชีวิตที่หรูหราริมถนนสาทร คอนโดนี้มีวิวพาโนรามา ตกแต่งระดับไฮเอนด์ และบริการพิเศษสำหรับผู้พักอาศัย" },
+                amenities: ["Air conditioning", "City View", "Infinity Pool", "Luxury Gym", "24/7 Concierge", "Smart Home System"],
+                agent: createAgent("Jane", "image_20b272.jpg"),
+                featured: true
+            },
+            { 
+                id: 202, refId: "TH-2011", status: "buy", type: "Commercial", price: 15000000, beds: 0, baths: 4, area: 350, floor: "4 Stories", furnishing: {en: "Bare Shell", th: "อาคารเปล่า"},
+                image: "https://www.thaihometown.com/photo/image_file182/5276672/5276672-1.jpg",
+                title: { en: "Commercial Building Sukhumvit", th: "อาคารพาณิชย์ สุขุมวิท" },
+                address: { en: "Watthana, Bangkok", th: "วัฒนา กรุงเทพมหานคร" },
+                description: { en: "Prime location 4-story commercial building suitable for a cafe, clinic, or office space. 10 minutes from BTS Asok.", th: "อาคารพาณิชย์ 4 ชั้น ทำเลทอง เหมาะสำหรับทำคาเฟ่ คลินิก หรือโฮมออฟฟิศ ห่างจาก BTS อโศกเพียง 10 นาที" },
+                amenities: ["High traffic area", "Parking nearby", "BTS Access"],
+                agent: createAgent("Sarah", "image_20b274.jpg"),
+                featured: false
+            },
+            {
+                id: 203, refId: "TH-2012", status: "rent", type: "Condo", price: 80000, beds: 2, baths: 2, area: 122, floor: "Mid Floor", furnishing: {en: "Fully Furnished", th: "ตกแต่งครบ"},
+                image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                title: { en: "The Bangkok Sathorn", th: "เดอะ แบงค็อค สาทร" },
+                address: { en: "Sathon, Bangkok", th: "สาทร กรุงเทพมหานคร" },
+                description: { en: "Beautiful unit, fully furnished, close to BTS Surasak.", th: "ยูนิตสวย เฟอร์ครบ ใกล้ BTS สุรศักดิ์" },
+                amenities: ["Air conditioning", "Pool", "Gym", "Close to BTS"],
+                agent: createAgent("Kaimook", "image_20b25a.jpg"),
+                featured: false
+            },
+            { 
+                id: 301, refId: "TH-3010", status: "rent", type: "House", price: 25000, beds: 3, baths: 3, area: 200, floor: "2 Stories", furnishing: {en: "Fully furnished", th: "ตกแต่งครบ"},
+                image: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                title: { en: "Pool Villa Hang Dong", th: "พูลวิลล่า หางดง" },
+                address: { en: "Hang Dong, Chiang Mai", th: "หางดง เชียงใหม่" },
+                description: { en: "Beautiful Lanna-modern pool villa in a secure expat-friendly estate. Includes private pool and garden maintenance.", th: "พูลวิลล่าสไตล์ล้านนาโมเดิร์นในโครงการที่ปลอดภัยและเป็นมิตรกับชาวต่างชาติ รวมบริการดูแลสระว่ายน้ำและสวน" },
+                amenities: ["Private Pool", "Air conditioning", "Western Kitchen", "Large Garden", "24/7 Security"],
+                agent: createAgent("Alice", "image_20b270.jpg"),
+                featured: true
+            },
+            { 
+                id: 302, refId: "TH-3011", status: "buy", type: "House", price: 2990000, beds: 3, baths: 3, area: 170, floor: "2 Stories", furnishing: {en: "Unfurnished", th: "ไม่มีเฟอร์นิเจอร์"},
+                image: "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                title: { en: "Karnkanok Ville 1 Doi Saket", th: "บ้านในโครงการกาญกนกวิลล์ 1 ดอยสะเก็ด" },
+                address: { en: "Doi Saket, Chiang Mai", th: "ดอยสะเก็ด เชียงใหม่" },
+                description: { en: "Well-maintained 2-story detached house in a popular village project in Doi Saket. Features 3 bedrooms, 3 bathrooms, and spacious living areas.", th: "บ้านเดี่ยว 2 ชั้นสภาพดีในโครงการหมู่บ้านยอดนิยมในดอยสะเก็ด มี 3 ห้องนอน 3 ห้องน้ำ และพื้นที่ใช้สอยกว้างขวาง" },
+                amenities: ["Garden", "Parking", "Village Security"],
+                agent: createAgent("Jane", "image_20b272.jpg"),
+                featured: false
+            },
+            { 
+                id: 401, refId: "TH-4010", status: "buy", type: "Land", price: 4290000, beds: 0, baths: 0, area: 288, floor: "-", furnishing: {en: "-", th: "-"},
+                image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                title: { en: "Land for sale in Thep Krasattri", th: "ขายที่ดิน เทพกระษัตรี" },
+                address: { en: "Thalang, Phuket", th: "ถลาง ภูเก็ต" },
+                description: { en: "Reduced from 4,990,000 THB. A well-located land plot for sale in Baan Don, Cherngtalay, offering a peaceful residential setting with an open view overlooking a landscaped garden. The plot is situated next to luxury villas in a quiet and secure residential development.", th: "ลดราคาจาก 4,990,000 บาท ที่ดินทำเลดีในบ้านดอน เชิงทะเล ให้บรรยากาศที่อยู่อาศัยที่เงียบสงบพร้อมวิวเปิดกว้างมองเห็นสวนสวย ที่ดินตั้งอยู่ติดกับวิลล่าหรูในโครงการที่พักอาศัยที่เงียบสงบและปลอดภัย" },
+                amenities: ["Quiet Location", "Near Luxury Villas", "Paved Road Access"],
+                agent: createAgent("Sarah", "image_20b274.jpg"),
+                featured: false
+            },
+            {
+                id: 402, refId: "TH-4011", status: "buy", type: "Land", price: 68000000, beds: 0, baths: 0, area: 27200, floor: "-", furnishing: {en: "-", th: "-"},
+                image: "https://images.unsplash.com/photo-1524813686514-a57563d77965?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                title: { en: "17 Rai Mountain View Land", th: "ที่ดิน 17 ไร่ วิวภูเขา" },
+                address: { en: "Thalang, Phuket", th: "ถลาง ภูเก็ต" },
+                description: { en: "17 rai of land surrounded by greenery mountain view for sale in Thalang, Phuket. The plot width is approximately 200 meters. Convenient access to community space and Phuket International Airport.", th: "ขายที่ดิน 17 ไร่ ล้อมรอบด้วยพื้นที่สีเขียววิวภูเขาในถลาง ภูเก็ต หน้ากว้างประมาณ 200 เมตร เดินทางสะดวกใกล้แหล่งชุมชนและสนามบินนานาชาติภูเก็ต" },
+                amenities: ["Mountain View", "Green Zone", "Close to Airport"],
+                agent: createAgent("Kaimook", "image_20b25a.jpg"),
+                featured: true
+            }
+        ];
+
+        const updateLangToggleUI = () => {
+            const btnTh = document.getElementById('btn-lang-th');
+            const btnEn = document.getElementById('btn-lang-en');
+            
+            if (currentLang === 'th') {
+                btnTh.className = "px-3 py-1 text-sm font-bold rounded-md bg-white shadow-sm text-primary transition-all";
+                btnEn.className = "px-3 py-1 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all bg-transparent";
+            } else {
+                btnEn.className = "px-3 py-1 text-sm font-bold rounded-md bg-white shadow-sm text-primary transition-all";
+                btnTh.className = "px-3 py-1 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all bg-transparent";
+            }
+        };
+
+        const populateSelects = () => {
+            const lang = currentLang;
+            
+            // Property Types Filter
+            const typeFilter = document.getElementById('prop-filter-type');
+            if(typeFilter) {
+                const curVal = typeFilter.value;
+                typeFilter.innerHTML = `<option value="all">${translations[lang].optSelectType.replace('-- ', '').replace(' --', '')}</option>` +
+                    fullTypes.map(t => `<option value="${t.val}">${t[lang]}</option>`).join('');
+                if (curVal) typeFilter.value = curVal;
+            }
+
+            // Property Types Look
+            const lookType = document.getElementById('look-type');
+            if(lookType) {
+                const ltVal = lookType.value;
+                lookType.innerHTML = `<option value="" disabled selected>${translations[lang].optSelectType}</option>` +
+                    fullTypes.map(t => `<option value="${t.val}">${t[lang]}</option>`).join('');
+                if(ltVal) lookType.value = ltVal;
+            }
+
+            // Province
+            const provSel = document.getElementById('look-province');
+            if(provSel) {
+                const pVal = provSel.value;
+                provSel.innerHTML = `<option value="" disabled selected>${translations[lang].optSelectProv}</option>` +
+                    Object.keys(locationData).map(k => `<option value="${k}">${locationData[k][lang]}</option>`).join('');
+                if(pVal) {
+                    provSel.value = pVal;
+                    updateDistricts();
+                }
+            }
+        };
+
+        const updateDistricts = () => {
+            const provKey = document.getElementById('look-province').value;
+            const distSel = document.getElementById('look-district');
+            
+            if(!provKey) {
+                distSel.disabled = true;
+                distSel.classList.add('bg-gray-100', 'text-gray-500');
+                distSel.classList.remove('bg-slate-50', 'text-gray-900');
+                distSel.innerHTML = `<option value="" disabled selected>${translations[currentLang].optSelectDist}</option>`;
+                return;
+            }
+
+            const districts = locationData[provKey].districts;
+            distSel.disabled = false;
+            distSel.classList.remove('bg-gray-100', 'text-gray-500');
+            distSel.classList.add('bg-slate-50', 'text-gray-900');
+            distSel.innerHTML = `<option value="" disabled selected>${translations[currentLang].optSelectDist}</option>` +
+                districts.map(d => `<option value="${d.en}">${d[currentLang]}</option>`).join('');
+        };
+
+        const setLanguage = (lang) => {
+            currentLang = lang;
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) el.innerHTML = translations[lang][key];
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang][key]) el.placeholder = translations[lang][key];
+            });
+
+            updateLangToggleUI();
+            populateSelects();
+            renderFeaturedProperties();
+            applyFiltersAndSort();
+            closeModal();
+            closeWechatModal();
+        };
+
+        const navigate = (targetPage) => {
+            const pages = ['home', 'properties', 'looking', 'contact'];
+            pages.forEach(page => {
+                document.getElementById(`page-${page}`).classList.add('hidden');
+                document.getElementById(`page-${page}`).classList.remove('block');
+                const navBtn = document.getElementById(`nav-${page}`);
+                if(navBtn) navBtn.className = "nav-link border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors";
+            });
+            
+            document.getElementById(`page-${targetPage}`).classList.remove('hidden');
+            document.getElementById(`page-${targetPage}`).classList.add('block');
+            
+            const activeNavBtn = document.getElementById(`nav-${targetPage}`);
+            if(activeNavBtn) activeNavBtn.className = "nav-link border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors";
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        const executeQuickSearch = (e) => {
+            e.preventDefault();
+            const text = document.getElementById('quick-search-text').value;
+            const status = document.getElementById('quick-status').value;
+            
+            document.getElementById('prop-search-text').value = text;
+            document.getElementById('prop-filter-status').value = status;
+            
+            navigate('properties');
+            applyFiltersAndSort();
+        };
+
+        const formatPrice = (price, status) => {
+            const formatted = new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', maximumFractionDigits: 0 }).format(price);
+            return status === 'rent' ? `${formatted} <span class="text-sm font-normal text-gray-500">${translations[currentLang].lblMonth}</span>` : formatted;
+        };
+
+        const createCardHTML = (prop) => {
+            const badgeColor = prop.status === 'rent' ? 'bg-indigo-100 text-indigo-800 border-indigo-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200';
+            const badgeText = prop.status === 'rent' ? translations[currentLang].optForRent : translations[currentLang].optForSale;
+            const typeText = fullTypes.find(t => t.val === prop.type)?.[currentLang] || prop.type;
+
+            const bedHTML = prop.beds > 0 ? `<div class="flex items-center gap-1.5 text-gray-600"><i class="ph ph-bed text-lg"></i> <span class="font-medium">${prop.beds}</span></div>` : '';
+            const bathHTML = prop.baths > 0 ? `<div class="flex items-center gap-1.5 text-gray-600 border-l border-gray-200 pl-2"><i class="ph ph-bathtub text-lg"></i> <span class="font-medium">${prop.baths}</span></div>` : '';
+            
+            return `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-primary/20 transition-all duration-300 group flex flex-col h-full cursor-pointer" onclick="openModal(${prop.id})">
+                    <div class="relative h-56 overflow-hidden bg-gray-200">
+                        <img src="${prop.image}" alt="Property" onerror="this.src='https://placehold.co/800x600/e2e8f0/475569?text=Property'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold border ${badgeColor} shadow-sm">${badgeText}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="mb-2"><span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-1 rounded uppercase tracking-wider">${typeText}</span></div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-1 leading-tight line-clamp-2">${prop.title[currentLang]}</h3>
+                        <p class="text-gray-500 text-sm mb-4 flex items-start gap-1 mt-1"><i class="ph ph-map-pin text-gray-400 mt-0.5"></i> <span class="line-clamp-1">${prop.address[currentLang]}</span></p>
+                        
+                        <div class="text-2xl font-bold text-dark mb-4 mt-auto">${formatPrice(prop.price, prop.status)}</div>
+                        
+                        <div class="flex items-center gap-2 border-t border-gray-100 pt-4 text-sm">
+                            ${bedHTML}
+                            ${bathHTML}
+                            <div class="flex items-center gap-1.5 text-gray-600 ${prop.beds > 0 || prop.baths > 0 ? 'border-l border-gray-200 pl-2' : ''}">
+                                <i class="ph ph-squares-four text-lg"></i> <span class="font-medium">${prop.area}m²</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderFeaturedProperties = () => {
+            const grid = document.getElementById('featured-grid');
+            const featuredProps = properties.filter(p => p.featured);
+            grid.innerHTML = featuredProps.map(createCardHTML).join('');
+        };
+
+        const applyFiltersAndSort = () => {
+            const text = document.getElementById('prop-search-text').value.toLowerCase();
+            const status = document.getElementById('prop-filter-status').value;
+            const type = document.getElementById('prop-filter-type').value;
+            const beds = document.getElementById('prop-filter-beds').value;
+            const sort = document.getElementById('prop-sort').value;
+
+            let filtered = properties.filter(prop => {
+                let match = true;
+                if (text) {
+                    const searchStr = `${prop.title.en} ${prop.title.th} ${prop.address.en} ${prop.address.th} ${prop.description.en} ${prop.description.th}`.toLowerCase();
+                    if (!searchStr.includes(text)) match = false;
+                }
+                if (status !== 'all' && prop.status !== status) match = false;
+                if (type !== 'all' && prop.type !== type) match = false;
+                if (beds !== 'all' && prop.beds < parseInt(beds)) match = false;
+                return match;
+            });
+
+            if (sort !== 'default') {
+                filtered.sort((a, b) => {
+                    if (sort === 'price-asc') return a.price - b.price;
+                    if (sort === 'price-desc') return b.price - a.price;
+                    if (sort === 'size-asc') return a.area - b.area;
+                    if (sort === 'size-desc') return b.area - a.area;
+                    return 0;
+                });
+            }
+
+            const grid = document.getElementById('property-grid');
+            const noResults = document.getElementById('no-results');
+            const countLabel = document.getElementById('results-count');
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+            } else {
+                grid.innerHTML = filtered.map(createCardHTML).join('');
+                grid.classList.remove('hidden');
+                noResults.classList.add('hidden');
+            }
+            
+            const countText = currentLang === 'en' 
+                ? `${translations.en.txtShowing} ${filtered.length} ${filtered.length === 1 ? translations.en.txtPropSingular : translations.en.txtPropS}`
+                : `${translations.th.txtShowing} ${filtered.length} ${translations.th.txtPropS}`;
+            countLabel.innerHTML = countText;
+        };
+
+        const toggleFilters = () => {
+            filtersOpen = !filtersOpen;
+            const panel = document.getElementById('advanced-filters-panel');
+            const btn = document.getElementById('btn-toggle-filters');
+            if (filtersOpen) {
+                panel.classList.add('open');
+                btn.classList.add('bg-primary', 'text-white', 'border-primary');
+                btn.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+            } else {
+                panel.classList.remove('open');
+                btn.classList.remove('bg-primary', 'text-white', 'border-primary');
+                btn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+            }
+        };
+
+        const resetPropertiesSearch = () => {
+            document.getElementById('prop-search-text').value = '';
+            document.getElementById('prop-filter-status').value = 'all';
+            document.getElementById('prop-filter-type').value = 'all';
+            document.getElementById('prop-filter-beds').value = 'all';
+            document.getElementById('prop-sort').value = 'default';
+            applyFiltersAndSort();
+        };
+
+        const openModal = (id) => {
+            const prop = properties.find(p => p.id === id);
+            if (!prop) return;
+
+            currentProp = prop; // Set property state for sharing
+
+            document.getElementById('modal-image').src = prop.image;
+            document.getElementById('modal-title').innerText = prop.title[currentLang];
+            document.getElementById('modal-address').innerText = prop.address[currentLang];
+            document.getElementById('modal-price').innerHTML = formatPrice(prop.price, prop.status);
+            
+            const pricePerSqm = Math.round(prop.price / prop.area);
+            document.getElementById('modal-price-sqm').innerHTML = `฿${pricePerSqm.toLocaleString()} ${translations[currentLang].lblSqm}`;
+
+            document.getElementById('modal-beds').innerText = prop.beds;
+            document.getElementById('modal-baths').innerText = prop.baths;
+            document.getElementById('modal-area').innerText = prop.area;
+            document.getElementById('modal-description').innerText = prop.description[currentLang];
+            document.getElementById('modal-ref-badge').innerText = prop.refId || `ID: ${prop.id}`;
+            document.getElementById('modal-floor').innerText = prop.floor || "-";
+            document.getElementById('modal-furnish').innerText = prop.furnishing ? prop.furnishing[currentLang] : "-";
+
+            const badge = document.getElementById('modal-badge');
+            if (prop.status === 'rent') {
+                badge.className = 'px-3 py-1.5 rounded-full text-sm font-bold shadow-md tracking-wide bg-indigo-500 text-white';
+                badge.innerText = translations[currentLang].optForRent;
+            } else {
+                badge.className = 'px-3 py-1.5 rounded-full text-sm font-bold shadow-md tracking-wide bg-emerald-500 text-white';
+                badge.innerText = translations[currentLang].optForSale;
+            }
+
+            document.getElementById('modal-type-badge').innerText = fullTypes.find(t => t.val === prop.type)?.[currentLang] || prop.type;
+
+            const amContainer = document.getElementById('modal-amenities');
+            if (prop.amenities && prop.amenities.length > 0) {
+                amContainer.innerHTML = prop.amenities.map(am => 
+                    `<div class="flex items-center gap-2"><i class="ph ph-check-circle text-emerald-500 text-lg"></i> ${am}</div>`
+                ).join('');
+            } else {
+                amContainer.innerHTML = `<span class="text-gray-400 italic">No specific amenities listed</span>`;
+            }
+
+            if (prop.agent) {
+                document.getElementById('modal-agent-img').src = prop.agent.img;
+                document.getElementById('modal-agent-name').innerText = prop.agent.name;
+                document.getElementById('modal-agent-agency').innerText = prop.agent.agency;
+                document.getElementById('modal-agent-tel').innerText = prop.agent.tel;
+                document.getElementById('modal-agent-line').innerText = prop.agent.line;
+                document.getElementById('modal-agent-wc').innerText = prop.agent.wc;
+            }
+
+            // Hide Share menu if it was open
+            document.getElementById('share-menu').classList.add('hidden');
+
+            const modal = document.getElementById('property-modal');
+            const container = document.getElementById('modal-content-container');
+            
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            container.classList.remove('scale-95');
+        };
+
+        const closeModal = () => {
+            const modal = document.getElementById('property-modal');
+            const container = document.getElementById('modal-content-container');
+            modal.classList.add('opacity-0');
+            container.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        const toggleShareMenu = () => {
+            document.getElementById('share-menu').classList.toggle('hidden');
+        };
+
+        const shareTo = (platform) => {
+            if(!currentProp) return;
+            document.getElementById('share-menu').classList.add('hidden');
+
+            // Generate an assumed distinct URL for the property
+            // This ?id= parameter is what allows deep linking to work when shared
+            const baseUrl = window.location.origin + window.location.pathname;
+            const propUrl = baseUrl + "?id=" + currentProp.id;
+            const textToShare = `${currentProp.title[currentLang]} - ${formatPrice(currentProp.price, currentProp.status)}`;
+
+            if(platform === 'facebook') {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propUrl)}`, '_blank');
+            } else if(platform === 'line') {
+                window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(propUrl)}`, '_blank');
+            } else if(platform === 'whatsapp') {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textToShare + " " + propUrl)}`, '_blank');
+            } else if(platform === 'telegram') {
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(propUrl)}&text=${encodeURIComponent(textToShare)}`, '_blank');
+            } else if(platform === 'wechat') {
+                showWechatShare(propUrl);
+            }
+        };
+
+        const showWechatShare = (url) => {
+            // Public API to generate QR Code
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
+            document.getElementById('wechat-qr').src = qrUrl;
+            
+            // Set dynamic agent details based on current property
+            if (currentProp.agent) {
+                document.getElementById('wechat-agent-img').src = currentProp.agent.img;
+                document.getElementById('wechat-agent-name').innerText = currentProp.agent.name;
+            }
+
+            const modal = document.getElementById('wechat-modal');
+            const container = document.getElementById('wechat-modal-content');
+            
+            modal.classList.remove('hidden');
+            void modal.offsetWidth; 
+            modal.classList.remove('opacity-0');
+            container.classList.remove('scale-95');
+        };
+
+        const closeWechatModal = () => {
+            const modal = document.getElementById('wechat-modal');
+            const container = document.getElementById('wechat-modal-content');
+            modal.classList.add('opacity-0');
+            container.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+
+        const showToast = (message) => {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        };
+
+        const submitRequirement = (e) => {
+            e.preventDefault();
+            showToast(translations[currentLang].msgReqSuccess);
+            e.target.reset();
+        };
+
+        const submitContact = (e) => {
+            e.preventDefault();
+            showToast(translations[currentLang].msgContSuccess);
+            e.target.reset();
+        };
+
+        // Check if URL has a shared property ID to open immediately (Deep Linking)
+        const checkSharedLink = () => {
+            const params = new URLSearchParams(window.location.search);
+            const sharedId = params.get('id');
+            
+            if (sharedId) {
+                // Wait a tiny bit for rendering, then open the specific property
+                setTimeout(() => {
+                    navigate('properties');
+                    openModal(parseInt(sharedId));
+                }, 300);
+            }
+        };
+
+        // Initialize App on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage('th'); 
+            navigate('home'); 
+            checkSharedLink(); // Process any shared ?id= link on load
+        });
+    </script>
+</body>
+</html>
