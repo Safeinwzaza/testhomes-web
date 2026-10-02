@@ -46,14 +46,21 @@
             transform: translateY(0);
             opacity: 1;
         }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
     </style>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#059669', 
-                        primaryHover: '#047857', 
+                        primary: '#1e3a8a', /* Deep Blue for Jubilee */
+                        primaryHover: '#1e40af', 
                         dark: '#0f172a', 
                     }
                 }
@@ -68,8 +75,8 @@
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="navigate('home')">
-                        <img src="./img/logo.jpg" alt="Jubilee Logo" class="h-10 object-contain">
-                        <span class="font-bold text-xl text-dark tracking-tight hidden sm:block mt-2">Jubilee Real Estate</span>
+                        <img src="./img/image_20b258.png" alt="Jubilee Logo" onerror="this.src='https://placehold.co/150x50?text=Jubilee'" class="h-10 object-contain">
+                        <span class="font-bold text-xl text-dark tracking-tight hidden sm:block mt-1">Jubilee Real Estate</span>
                     </div>
                     <div class="hidden md:ml-10 md:flex md:space-x-8">
                         <button onclick="navigate('home')" id="nav-home" data-i18n="navHome" class="nav-link border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">Home</button>
@@ -112,9 +119,9 @@
                 
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div class="max-w-2xl">
-                        <span data-i18n="heroBadge" class="inline-block py-1 px-3 rounded-full bg-primary/20 text-emerald-300 text-sm font-semibold mb-4 border border-primary/30">#1 Real Estate Platform</span>
+                        <span data-i18n="heroBadge" class="inline-block py-1 px-3 rounded-full bg-blue-500/20 text-blue-300 text-sm font-semibold mb-4 border border-blue-500/30">Jubilee Real Estate Co.,Ltd.</span>
                         <h1 data-i18n="heroTitle" class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
-                            Find Your Perfect <br><span class="text-emerald-400">Place in Thailand</span>
+                            Find Your Perfect <br><span class="text-blue-400">Place in Thailand</span>
                         </h1>
                         <p data-i18n="heroSub" class="text-lg md:text-xl text-gray-300 mb-10 drop-shadow">
                             From university dorms in Phitsanulok to luxury condos in Bangkok, discover the best properties tailored to your lifestyle.
@@ -212,7 +219,7 @@
             <div class="bg-primary py-16">
                 <div class="max-w-4xl mx-auto px-4 text-center">
                     <h2 data-i18n="ctaTitle" class="text-3xl md:text-4xl font-bold text-white mb-4">Can't find what you're looking for?</h2>
-                    <p data-i18n="ctaSub" class="text-emerald-100 mb-8 text-lg">Post your specific requirements and let our network find it for you.</p>
+                    <p data-i18n="ctaSub" class="text-blue-100 mb-8 text-lg">Post your specific requirements and let our network find it for you.</p>
                     <button onclick="navigate('looking')" class="bg-white text-primary hover:bg-slate-50 px-8 py-4 rounded-xl font-bold text-lg shadow-xl transition-transform hover:-translate-y-1 inline-flex items-center gap-2">
                         <i class="ph ph-megaphone text-2xl"></i> <span data-i18n="ctaBtn">Post a Requirement</span>
                     </button>
@@ -234,7 +241,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="ph ph-magnifying-glass text-gray-400 text-lg"></i>
                             </div>
-                            <input type="text" id="prop-search-text" data-i18n-placeholder="plcSearchFull" placeholder="Search by name, location, or keyword..." class="w-full bg-slate-100 border-transparent focus:bg-white border focus:border-primary text-gray-900 py-2.5 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                            <input type="text" id="prop-search-text" data-i18n-placeholder="plcSearchFull" onkeyup="applyFiltersAndSort()" placeholder="Search by name, location, or keyword..." class="w-full bg-slate-100 border-transparent focus:bg-white border focus:border-primary text-gray-900 py-2.5 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all">
                         </div>
                         
                         <div class="w-full md:w-auto flex flex-row gap-3">
@@ -520,7 +527,7 @@
     <footer class="bg-white border-t border-gray-200 py-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
             <div class="flex flex-col md:flex-row items-center gap-3">
-                <img src="./img/logo.jpg" alt="Jubilee Logo" class="h-10 object-contain grayscale opacity-60 hidden md:block">
+                <img src="./img/image_20b258.png" alt="Jubilee Logo" class="h-10 object-contain grayscale opacity-60 hidden md:block" onerror="this.style.display='none'">
                 <div class="text-center md:text-left">
                     <span class="font-bold text-dark text-base">Jubilee Real Estate Co.,Ltd.</span><br>
                     <span class="text-xs">ทะเบียนนิติบุคคลเลขที่ 0105569020674 | 4475 ถ. สุขุมวิท แขวงบางนาใต้ เขตบางนา กทม. 10260</span>
@@ -562,7 +569,7 @@
                     <div class="flex items-center flex-shrink-0">
                         <!-- Share Dropdown -->
                         <div class="relative inline-block text-left">
-                            <button onclick="toggleShareMenu()" class="text-gray-500 hover:text-primary bg-gray-100 hover:bg-emerald-50 w-10 h-10 rounded-full transition-colors flex items-center justify-center">
+                            <button onclick="toggleShareMenu()" class="text-gray-500 hover:text-primary bg-gray-100 hover:bg-slate-200 w-10 h-10 rounded-full transition-colors flex items-center justify-center">
                                 <i class="ph ph-share-network font-bold text-lg"></i>
                             </button>
                             <div id="share-menu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-gray-100 z-50 overflow-hidden">
@@ -657,27 +664,21 @@
         </div>
     </div>
 
-    <!-- WeChat Share Modal -->
+    <!-- WeChat QR Code Modal (Special Popup for WeChat Sharing) -->
     <div id="wechat-modal" class="fixed inset-0 z-[200] hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col" id="wechat-modal-content">
-            <div class="p-5 text-center border-b border-gray-100 relative">
-                <button onclick="closeWechatModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
-                    <i class="ph ph-x font-bold"></i>
-                </button>
-                <img src="./img/logo.jpg" alt="Jubilee Real Estate" class="h-12 mx-auto mb-3 object-contain">
-                <h3 class="font-bold text-gray-900 text-lg" data-i18n="wechatScan">Scan to Share on WeChat</h3>
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col items-center p-8 relative">
+            <button onclick="closeWeChatQR()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 bg-gray-100 p-2 rounded-full transition-colors"><i class="ph ph-x font-bold"></i></button>
+            <img src="./img/image_20b258.png" onerror="this.style.display='none'" class="h-16 mb-4 object-contain">
+            <h3 class="text-xl font-bold text-dark mb-1 text-center" data-i18n="wechatScan">Scan to Share on WeChat</h3>
+            <p class="text-sm text-gray-500 mb-6 text-center" id="wechat-prop-title"></p>
+            <div class="p-3 border-4 border-[#07C160] rounded-2xl mb-6 shadow-md bg-white">
+                <img id="wechat-qr-img" src="" alt="QR Code" class="w-48 h-48">
             </div>
-            <div class="p-8 bg-slate-50 flex justify-center border-b border-gray-100">
-                <div class="p-2 bg-white rounded-2xl shadow-sm border border-gray-200">
-                    <img id="wechat-qr" src="" alt="QR Code" class="w-48 h-48">
-                </div>
-            </div>
-            <div class="p-5 bg-white flex items-center gap-4">
-                <img id="wechat-agent-img" src="" alt="Agent" class="w-14 h-14 rounded-full object-cover border border-gray-200 shadow-sm">
-                <div class="text-left">
-                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5" data-i18n="modalAgent">Contact Agent</p>
-                    <p id="wechat-agent-name" class="font-bold text-gray-900 text-sm leading-tight"></p>
-                    <p class="text-xs text-emerald-600 font-medium flex items-center gap-1 mt-1"><i class="ph ph-wechat-logo"></i> Jubilee99888</p>
+            <div class="flex items-center gap-3 bg-slate-50 p-4 rounded-2xl w-full border border-slate-100">
+                <img id="wechat-agent-img" src="" class="w-14 h-14 rounded-full border-2 border-white shadow-sm object-cover">
+                <div>
+                    <p class="font-bold text-gray-900" id="wechat-agent-name"></p>
+                    <p class="text-xs text-[#07C160] font-bold">Jubilee Real Estate Co.,Ltd.</p>
                 </div>
             </div>
         </div>
@@ -693,13 +694,13 @@
         // State
         let currentLang = 'th';
         let filtersOpen = false;
-        let currentProp = null; // Store current property for sharing
+        let currentProp = null;
 
         // Translations Dictionary
         const translations = {
             en: {
                 navHome: "Home", navProperties: "Properties", navLooking: "Looking", navContact: "Contact", navAddListing: "Post Requirement",
-                heroBadge: "#1 Real Estate Platform", heroTitle: "Find Your Perfect <br><span class='text-emerald-400'>Place in Thailand</span>",
+                heroBadge: "#1 Real Estate Platform", heroTitle: "Find Your Perfect <br><span class='text-blue-400'>Property in Thailand</span>",
                 heroSub: "From university dorms in Phitsanulok to luxury condos in Bangkok, discover the best properties tailored to your lifestyle.",
                 plcSearch: "Search location, condo name...", plcSearchFull: "Search by name, location, or keyword...",
                 lblStatus: "Status", lblType: "Property Type", lblBeds: "Bedrooms",
@@ -727,11 +728,11 @@
                 lblMonth: "/ mo", lblSqm: "/ sqm", txtShowing: "Showing", txtPropS: "properties", txtPropSingular: "property",
                 optSelectType: "-- Select Type --", optSelectProv: "-- Select Province --", optSelectDist: "-- Select District --",
                 msgReqSuccess: "Requirement posted successfully!", msgContSuccess: "Message sent! We'll be in touch.",
-                wechatScan: "Scan to Share on WeChat"
+                wechatScan: "Scan to Share on WeChat", lblShare: "Share this property", linkCopied: "Link copied to clipboard!"
             },
             th: {
                 navHome: "หน้าแรก", navProperties: "ค้นหาอสังหาฯ", navLooking: "ลงประกาศหา", navContact: "ติดต่อเรา", navAddListing: "ลงประกาศความต้องการ",
-                heroBadge: "แพลตฟอร์มอสังหาฯ อันดับ 1", heroTitle: "ค้นหาสถานที่<br><span class='text-emerald-400'>ที่ใช่สำหรับคุณ</span>",
+                heroBadge: "แพลตฟอร์มอสังหาฯ อันดับ 1", heroTitle: "ค้นหาสถานที่<br><span class='text-blue-400'>ที่ใช่สำหรับคุณ</span>",
                 heroSub: "ตั้งแต่หอพักนักศึกษาในพิษณุโลกไปจนถึงคอนโดหรูในกรุงเทพฯ ค้นพบอสังหาริมทรัพย์ที่ดีที่สุดที่เหมาะกับไลฟ์สไตล์ของคุณ",
                 plcSearch: "ค้นหาทำเล, ชื่อคอนโด...", plcSearchFull: "ค้นหาจากชื่อ, ทำเล, หรือคำค้นหา...",
                 lblStatus: "สถานะ", lblType: "ประเภทอสังหาฯ", lblBeds: "ห้องนอน",
@@ -759,7 +760,7 @@
                 lblMonth: "/ เดือน", lblSqm: "/ ตร.ม.", txtShowing: "แสดง", txtPropS: "รายการ", txtPropSingular: "รายการ",
                 optSelectType: "-- เลือกประเภท --", optSelectProv: "-- เลือกจังหวัด --", optSelectDist: "-- เลือกเขต/อำเภอ --",
                 msgReqSuccess: "ส่งประกาศความต้องการเรียบร้อยแล้ว!", msgContSuccess: "ส่งข้อความสำเร็จ! เราจะติดต่อกลับไป",
-                wechatScan: "สแกนด้วย WeChat เพื่อแชร์"
+                wechatScan: "สแกนด้วย WeChat เพื่อแชร์", lblShare: "แชร์ทรัพย์นี้", linkCopied: "คัดลอกลิงก์เรียบร้อยแล้ว!"
             }
         };
 
@@ -812,7 +813,6 @@
             img: img
         });
 
-        // Mock Properties Data
         const properties = [
             {
                 id: 999, refId: "WCP-335028", status: "rent", type: "Condo", price: 32000, beds: 0, baths: 0, area: 41, floor: "9th Floor", 
@@ -825,7 +825,7 @@
                     th: "ให้เช่า: คอนโดดูเพล็กซ์ Knightsbridge Space สุขุมวิท-พระราม 4 ขนาด 41 ตร.ม. ชั้น 9 ตกแต่งครบพร้อม Wi-Fi ความเร็วสูง และเครื่องใช้ไฟฟ้า เดินเพียง 4 นาทีจาก BTS พระโขนง\n\nเงื่อนไขการเช่า: 1 เดือน, 3 เดือน, 6 เดือน, 1 ปี" 
                 },
                 amenities: ["Air conditioning", "High speed wifi", "Auto parking", "Sky lounge", "co-kitchen", "co-working space", "sauna room", "sky pool", "gym", "CCTV", "55\" Smart TV", "Refrigerator", "Electric kettle", "Oven", "Washing & drying machine (2in1)"],
-                agent: createAgent("Kaimook", "image_20b25a.jpg"),
+                agent: createAgent("Kaimook", "./img/image_20b25a.jpg"),
                 featured: true
             },
             { 
@@ -835,7 +835,7 @@
                 address: { en: "Tha Pho, Mueang Phitsanulok", th: "ต.ท่าโพธิ์ อ.เมือง พิษณุโลก" },
                 description: { en: "Fully furnished student dormitory just 5 minutes walk from Naresuan University Gate 4. Includes AC, water heater, high-speed WiFi, and 24/7 security. Perfect for students looking for convenience and safety.", th: "หอพักนักศึกษาพร้อมเฟอร์นิเจอร์ครบครัน เดินเพียง 5 นาทีจากประตู 4 มหาวิทยาลัยนเรศวร มีแอร์ เครื่องทำน้ำอุ่น WiFi ความเร็วสูง และรปภ. 24 ชม. เหมาะสำหรับนักศึกษาที่ต้องการความสะดวกและปลอดภัย" },
                 amenities: ["Air conditioning", "High speed wifi", "Water heater", "CCTV", "Keycard access", "Parking"],
-                agent: createAgent("Alice", "image_20b270.jpg"),
+                agent: createAgent("Alice", "./img/image_20b270.jpg"),
                 featured: true
             },
             { 
@@ -845,7 +845,7 @@
                 address: { en: "Tha Pho, Mueang Phitsanulok", th: "ต.ท่าโพธิ์ อ.เมือง พิษณุโลก" },
                 description: { en: "Spacious townhouse ideal for sharing with friends. Located near the university with plenty of food stalls and cafes nearby. Features 3 bedrooms, 2 bathrooms, and a living area.", th: "ทาวน์โฮมกว้างขวางเหมาะสำหรับแชร์กับเพื่อนๆ ตั้งอยู่ใกล้มหาวิทยาลัย มีร้านอาหารและคาเฟ่มากมายอยู่ใกล้เคียง มี 3 ห้องนอน 2 ห้องน้ำ และพื้นที่นั่งเล่น" },
                 amenities: ["Air conditioning in bedrooms", "Parking", "Living area", "Kitchen counter"],
-                agent: createAgent("Jane", "image_20b272.jpg"),
+                agent: createAgent("Jane", "./img/image_20b272.jpg"),
                 featured: false
             },
             { 
@@ -855,7 +855,7 @@
                 address: { en: "Nai Muang, Mueang Phitsanulok", th: "ในเมือง อ.เมือง พิษณุโลก" },
                 description: { en: "Great investment opportunity! Modern condominium unit right in the heart of the city near bus terminal. High rental yield potential. Pool and gym facilities included.", th: "โอกาสการลงทุนที่ยอดเยี่ยม! คอนโดมิเนียมยูนิตทันสมัยใจกลางเมืองใกล้ บขส. ศักยภาพผลตอบแทนค่าเช่าสูง มีสระว่ายน้ำและฟิตเนส" },
                 amenities: ["Air conditioning", "Pool", "Gym", "Security 24/7", "Elevator", "Balcony"],
-                agent: createAgent("Sarah", "image_20b274.jpg"),
+                agent: createAgent("Sarah", "./img/image_20b274.jpg"),
                 featured: false
             },
             { 
@@ -865,7 +865,7 @@
                 address: { en: "Mueang Phitsanulok", th: "อ.เมือง พิษณุโลก" },
                 description: { en: "Beautiful newly built detached house in a quiet neighborhood. Large garden space, 4 bedrooms, 4 bathrooms, and parking for 3 cars.", th: "บ้านเดี่ยวสร้างใหม่สวยงามในย่านที่เงียบสงบ มีพื้นที่สวนกว้างขวาง 4 ห้องนอน 4 ห้องน้ำ และจอดรถได้ 3 คัน" },
                 amenities: ["Garden", "3 Car Parking", "24/7 Security Village"],
-                agent: createAgent("Kaimook", "image_20b25a.jpg"),
+                agent: createAgent("Kaimook", "./img/image_20b25a.jpg"),
                 featured: false
             },
             { 
@@ -875,7 +875,7 @@
                 address: { en: "Wang Phikun, Wang Thong", th: "วังพิกุล วังทอง พิษณุโลก" },
                 description: { en: "47 Rai of prime land located right on the Phitsanulok Bypass road. Wide frontage of 116 meters. Perfect for large scale commercial or residential development.", th: "ที่ดิน 47 ไร่ ทำเลทองติดถนนเลี่ยงเมืองพิษณุโลก หน้ากว้าง 116 เมตร เหมาะสำหรับการพัฒนาโครงการพาณิชย์หรือที่อยู่อาศัยขนาดใหญ่" },
                 amenities: ["Main Road Access", "High Visibility"],
-                agent: createAgent("Alice", "image_20b270.jpg"),
+                agent: createAgent("Alice", "./img/image_20b270.jpg"),
                 featured: false
             },
             { 
@@ -885,7 +885,7 @@
                 address: { en: "Sathon, Bangkok", th: "สาทร กรุงเทพมหานคร" },
                 description: { en: "Experience unparalleled luxury living by Sathorn road. This stunning condo offers panoramic views, high-end finishing, and exclusive residential services.", th: "สัมผัสประสบการณ์การใช้ชีวิตที่หรูหราริมถนนสาทร คอนโดนี้มีวิวพาโนรามา ตกแต่งระดับไฮเอนด์ และบริการพิเศษสำหรับผู้พักอาศัย" },
                 amenities: ["Air conditioning", "City View", "Infinity Pool", "Luxury Gym", "24/7 Concierge", "Smart Home System"],
-                agent: createAgent("Jane", "image_20b272.jpg"),
+                agent: createAgent("Jane", "./img/image_20b272.jpg"),
                 featured: true
             },
             { 
@@ -895,7 +895,7 @@
                 address: { en: "Watthana, Bangkok", th: "วัฒนา กรุงเทพมหานคร" },
                 description: { en: "Prime location 4-story commercial building suitable for a cafe, clinic, or office space. 10 minutes from BTS Asok.", th: "อาคารพาณิชย์ 4 ชั้น ทำเลทอง เหมาะสำหรับทำคาเฟ่ คลินิก หรือโฮมออฟฟิศ ห่างจาก BTS อโศกเพียง 10 นาที" },
                 amenities: ["High traffic area", "Parking nearby", "BTS Access"],
-                agent: createAgent("Sarah", "image_20b274.jpg"),
+                agent: createAgent("Sarah", "./img/image_20b274.jpg"),
                 featured: false
             },
             {
@@ -905,7 +905,7 @@
                 address: { en: "Sathon, Bangkok", th: "สาทร กรุงเทพมหานคร" },
                 description: { en: "Beautiful unit, fully furnished, close to BTS Surasak.", th: "ยูนิตสวย เฟอร์ครบ ใกล้ BTS สุรศักดิ์" },
                 amenities: ["Air conditioning", "Pool", "Gym", "Close to BTS"],
-                agent: createAgent("Kaimook", "image_20b25a.jpg"),
+                agent: createAgent("Kaimook", "./img/image_20b25a.jpg"),
                 featured: false
             },
             { 
@@ -915,7 +915,7 @@
                 address: { en: "Hang Dong, Chiang Mai", th: "หางดง เชียงใหม่" },
                 description: { en: "Beautiful Lanna-modern pool villa in a secure expat-friendly estate. Includes private pool and garden maintenance.", th: "พูลวิลล่าสไตล์ล้านนาโมเดิร์นในโครงการที่ปลอดภัยและเป็นมิตรกับชาวต่างชาติ รวมบริการดูแลสระว่ายน้ำและสวน" },
                 amenities: ["Private Pool", "Air conditioning", "Western Kitchen", "Large Garden", "24/7 Security"],
-                agent: createAgent("Alice", "image_20b270.jpg"),
+                agent: createAgent("Alice", "./img/image_20b270.jpg"),
                 featured: true
             },
             { 
@@ -925,7 +925,7 @@
                 address: { en: "Doi Saket, Chiang Mai", th: "ดอยสะเก็ด เชียงใหม่" },
                 description: { en: "Well-maintained 2-story detached house in a popular village project in Doi Saket. Features 3 bedrooms, 3 bathrooms, and spacious living areas.", th: "บ้านเดี่ยว 2 ชั้นสภาพดีในโครงการหมู่บ้านยอดนิยมในดอยสะเก็ด มี 3 ห้องนอน 3 ห้องน้ำ และพื้นที่ใช้สอยกว้างขวาง" },
                 amenities: ["Garden", "Parking", "Village Security"],
-                agent: createAgent("Jane", "image_20b272.jpg"),
+                agent: createAgent("Jane", "./img/image_20b272.jpg"),
                 featured: false
             },
             { 
@@ -935,7 +935,7 @@
                 address: { en: "Thalang, Phuket", th: "ถลาง ภูเก็ต" },
                 description: { en: "Reduced from 4,990,000 THB. A well-located land plot for sale in Baan Don, Cherngtalay, offering a peaceful residential setting with an open view overlooking a landscaped garden. The plot is situated next to luxury villas in a quiet and secure residential development.", th: "ลดราคาจาก 4,990,000 บาท ที่ดินทำเลดีในบ้านดอน เชิงทะเล ให้บรรยากาศที่อยู่อาศัยที่เงียบสงบพร้อมวิวเปิดกว้างมองเห็นสวนสวย ที่ดินตั้งอยู่ติดกับวิลล่าหรูในโครงการที่พักอาศัยที่เงียบสงบและปลอดภัย" },
                 amenities: ["Quiet Location", "Near Luxury Villas", "Paved Road Access"],
-                agent: createAgent("Sarah", "image_20b274.jpg"),
+                agent: createAgent("Sarah", "./img/image_20b274.jpg"),
                 featured: false
             },
             {
@@ -945,7 +945,7 @@
                 address: { en: "Thalang, Phuket", th: "ถลาง ภูเก็ต" },
                 description: { en: "17 rai of land surrounded by greenery mountain view for sale in Thalang, Phuket. The plot width is approximately 200 meters. Convenient access to community space and Phuket International Airport.", th: "ขายที่ดิน 17 ไร่ ล้อมรอบด้วยพื้นที่สีเขียววิวภูเขาในถลาง ภูเก็ต หน้ากว้างประมาณ 200 เมตร เดินทางสะดวกใกล้แหล่งชุมชนและสนามบินนานาชาติภูเก็ต" },
                 amenities: ["Mountain View", "Green Zone", "Close to Airport"],
-                agent: createAgent("Kaimook", "image_20b25a.jpg"),
+                agent: createAgent("Kaimook", "./img/image_20b25a.jpg"),
                 featured: true
             }
         ];
@@ -1035,7 +1035,7 @@
             renderFeaturedProperties();
             applyFiltersAndSort();
             closeModal();
-            closeWechatModal();
+            closeWeChatQR();
         };
 
         const navigate = (targetPage) => {
@@ -1195,12 +1195,15 @@
 
             currentProp = prop; // Set property state for sharing
 
+            // Set URL parameter for deep linking
+            window.history.pushState({}, '', `?id=${id}`);
+
             document.getElementById('modal-image').src = prop.image;
             document.getElementById('modal-title').innerText = prop.title[currentLang];
             document.getElementById('modal-address').innerText = prop.address[currentLang];
             document.getElementById('modal-price').innerHTML = formatPrice(prop.price, prop.status);
             
-            const pricePerSqm = Math.round(prop.price / prop.area);
+            const pricePerSqm = prop.area > 0 ? Math.round(prop.price / prop.area) : 0;
             document.getElementById('modal-price-sqm').innerHTML = `฿${pricePerSqm.toLocaleString()} ${translations[currentLang].lblSqm}`;
 
             document.getElementById('modal-beds').innerText = prop.beds;
@@ -1253,6 +1256,9 @@
         };
 
         const closeModal = () => {
+            // Remove ?id= from URL when closing modal
+            window.history.pushState({}, '', window.location.pathname);
+            
             const modal = document.getElementById('property-modal');
             const container = document.getElementById('modal-content-container');
             modal.classList.add('opacity-0');
@@ -1269,49 +1275,41 @@
             document.getElementById('share-menu').classList.add('hidden');
 
             // Generate an assumed distinct URL for the property
-            // This ?id= parameter is what allows deep linking to work when shared
             const baseUrl = window.location.origin + window.location.pathname;
             const propUrl = baseUrl + "?id=" + currentProp.id;
-            const textToShare = `${currentProp.title[currentLang]} - ${formatPrice(currentProp.price, currentProp.status)}`;
+            const textToShare = `${currentProp.title[currentLang]} - ${formatPrice(currentProp.price, currentProp.status).replace(/<[^>]*>?/gm, '')}`; // strip html from price
 
             if(platform === 'facebook') {
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propUrl)}`, '_blank');
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propUrl)}`, '_blank', 'width=600,height=500');
             } else if(platform === 'line') {
-                window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(propUrl)}`, '_blank');
+                window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(propUrl)}`, '_blank', 'width=600,height=500');
             } else if(platform === 'whatsapp') {
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textToShare + " " + propUrl)}`, '_blank');
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textToShare + " " + propUrl)}`, '_blank', 'width=600,height=500');
             } else if(platform === 'telegram') {
-                window.open(`https://t.me/share/url?url=${encodeURIComponent(propUrl)}&text=${encodeURIComponent(textToShare)}`, '_blank');
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(propUrl)}&text=${encodeURIComponent(textToShare)}`, '_blank', 'width=600,height=500');
             } else if(platform === 'wechat') {
                 showWechatShare(propUrl);
             }
         };
 
         const showWechatShare = (url) => {
-            // Public API to generate QR Code
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
-            document.getElementById('wechat-qr').src = qrUrl;
+            document.getElementById('wechat-qr-img').src = qrUrl;
             
-            // Set dynamic agent details based on current property
             if (currentProp.agent) {
                 document.getElementById('wechat-agent-img').src = currentProp.agent.img;
                 document.getElementById('wechat-agent-name').innerText = currentProp.agent.name;
+                document.getElementById('wechat-prop-title').innerText = currentProp.title[currentLang];
             }
 
             const modal = document.getElementById('wechat-modal');
-            const container = document.getElementById('wechat-modal-content');
-            
             modal.classList.remove('hidden');
-            void modal.offsetWidth; 
-            modal.classList.remove('opacity-0');
-            container.classList.remove('scale-95');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
         };
 
-        const closeWechatModal = () => {
+        const closeWeChatQR = () => {
             const modal = document.getElementById('wechat-modal');
-            const container = document.getElementById('wechat-modal-content');
             modal.classList.add('opacity-0');
-            container.classList.add('scale-95');
             setTimeout(() => modal.classList.add('hidden'), 300);
         };
 
@@ -1334,13 +1332,11 @@
             e.target.reset();
         };
 
-        // Check if URL has a shared property ID to open immediately (Deep Linking)
         const checkSharedLink = () => {
             const params = new URLSearchParams(window.location.search);
             const sharedId = params.get('id');
             
             if (sharedId) {
-                // Wait a tiny bit for rendering, then open the specific property
                 setTimeout(() => {
                     navigate('properties');
                     openModal(parseInt(sharedId));
@@ -1352,7 +1348,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             setLanguage('th'); 
             navigate('home'); 
-            checkSharedLink(); // Process any shared ?id= link on load
+            checkSharedLink(); 
         });
     </script>
 </body>
